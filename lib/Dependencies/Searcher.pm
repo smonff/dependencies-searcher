@@ -62,15 +62,24 @@ Perhaps a little code snippet.
 
 =cut
 
+# Init parameters
+has 'use_pattern' => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1,
+);
 
+has 'requires_pattern' => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1,
+);
 
-# Init
-my $use_pattern = "^use ";
-my $requires_pattern = "^requires ";
-# Only pm files
-# No filename
-# Ignore case
-my $parameters = "--perl -hi";
+has 'parameters' => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1,
+);
 
 
 
@@ -90,13 +99,13 @@ foreach my $element ( @elements ) {
 
 # Remove endings " ./"
 $path =~ s/\s\.\/$//;
-say $path;
+# say $path;
 
+# TODO !!!!
+# my @uses = $util->get_modules($self->parameters, $self->use_pattern, $self->path);
+# my @requires = $util->get_modules($self->parameters, $self->requires_pattern, $self->path);
 
-my @uses = $util->get_modules($parameters, $use_pattern, $path);
-my @requires = $util->get_modules($parameters, $requires_pattern, $path);
-
-my @merged_dependencies = (@uses, @requires);
+# my @merged_dependencies = (@uses, @requires);
 
 
 
@@ -117,6 +126,8 @@ automatically be notified of progress on your bug as I make changes.
 
 =head1 TODOs
 
+  * Must be implemented from a script tht use this module. The module itself
+    must stay generic.
   * Test if Ack L<http://beyondgrep.com> is installed
   * Add "our $VERSION = '0.03';" to all Shurf::Wax modules"
   * Compare how many modules are found at the beginning of the process
