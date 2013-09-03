@@ -81,32 +81,75 @@ has 'parameters' => (
     required => 1,
 );
 
-
-
-
-# Retrieve names of :
-#  * lib/ directory, if it don't exist, we don't care and die
-#  * Makefile.PL
-#  * script/ directory, if we use a Catalyst application
-# ... only if they exists !
-my $util = Dependencies::Searcher::Utils->new();
-my @elements = $util->get_files();
-
-my $path = "";
-foreach my $element ( @elements ) {
-    $path .= " ./" .  $element;
-}
-
-# Remove endings " ./"
-$path =~ s/\s\.\/$//;
-# say $path;
-
 # TODO !!!!
 # my @uses = $util->get_modules($self->parameters, $self->use_pattern, $self->path);
 # my @requires = $util->get_modules($self->parameters, $self->requires_pattern, $self->path);
 
 # my @merged_dependencies = (@uses, @requires);
 
+sub get_modules {
+    my $self = shift;
+    # say $self;
+    # p @_;
+    my ($params, $patrn, $p) = @_;
+    my $request = "$params $patrn $p";
+    # p $request;
+    my @moduls = `ack $request`;
+
+
+    if ( defined $moduls[0]) {
+	if ($moduls[0] =~ m/^use/ or $moduls[0] =~ m/^require/) {
+	    return @moduls;
+	} else {
+	    die "Failed to retrieve modules with Ack";
+	}
+    } else {
+	say "No $patrn found !";
+    }
+}
+
+sub get_files {
+    my $self = shift;
+    my @structure;
+    $structure[0] = "";
+    $structure[1] = "";
+    $structure[2] = "";
+    if (-d "lib") {
+	$structure[0] = "lib";
+    } else {
+	die "Don't look like we are working on a Perl module";
+    }
+
+    if (-f "Makefile.PL") {
+	$structure[1] = "Makefile.PL";
+    }
+
+    if (-d "script") {
+	$structure[2] = "script";
+    }
+    # p @structure;
+    return @structure;
+}
+
+# Retrieve names of :
+#  * lib/ directory, if it don't exist, we don't care and die
+#  * Makefile.PL
+#  * script/ directory, if we use a Catalyst application
+# ... only if they exists !
+sub build_full_path {
+    my $self = shift;
+    my @elements = @_;
+    my $path = "";
+    foreach my $element ( @elements ) {
+	$path .= " ./" .  $element;
+    }
+
+    # Remove endings " ./"
+    $path =~ s/\s\.\/$//;
+    p $path;
+
+    return $path;
+}
 
 
 =head1 AUTHOR
