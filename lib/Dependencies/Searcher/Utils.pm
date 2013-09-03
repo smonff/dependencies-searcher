@@ -1,4 +1,4 @@
-package Dependencies::Searcher;
+package Dependencies::Searcher::Utils;
 
 use 5.006;
 use strict;
@@ -8,11 +8,10 @@ use feature qw(say);
 use Module::CoreList qw();
 use autodie;
 use Moose;
-use Dependencies::Searcher::Utils;
 
 # Use these modules throught a system call
-# requires Module::Version;
-# requires App::Ack;
+# require Module::Version;
+# require App::Ack;
 
 
 =head1 NAME
@@ -62,43 +61,49 @@ Perhaps a little code snippet.
 
 =cut
 
+sub get_modules {
+    my $self = shift;
+    say $self;
+    p @_;
+    my ($params, $patrn, $p) = @_;
+    my $request = "$params $patrn $p";
+    p $request;
+    my @moduls = `ack $request`;
 
 
-# Init
-my $use_pattern = "^use ";
-my $requires_pattern = "^requires ";
-# Only pm files
-# No filename
-# Ignore case
-my $parameters = "--perl -hi";
-
-
-
-
-# Retrieve names of :
-#  * lib/ directory, if it don't exist, we don't care and die
-#  * Makefile.PL
-#  * script/ directory, if we use a Catalyst application
-# ... only if they exists !
-my $util = Dependencies::Searcher::Utils->new();
-my @elements = $util->get_files();
-
-my $path = "";
-foreach my $element ( @elements ) {
-    $path .= " ./" .  $element;
+    if ( defined $moduls[0]) {
+	if ($moduls[0] =~ m/^use/ or $moduls[0] =~ m/^require/) {
+	    return @moduls;
+	} else {
+	    die "Failed to retrieve modules with Ack";
+	}
+    } else {
+	say "No $patrn found !";
+    }
 }
 
-# Remove endings " ./"
-$path =~ s/\s\.\/$//;
-say $path;
+sub get_files {
+    my $self = shift;
+    my @structure;
+    $structure[0] = "";
+    $structure[1] = "";
+    $structure[2] = "";
+    if (-d "lib") {
+	$structure[0] = "lib";
+    } else {
+	die "Don't look like we are working on a Perl module";
+    }
 
+    if (-f "Makefile.PL") {
+	$structure[1] = "Makefile.PL";
+    }
 
-my @uses = $util->get_modules($parameters, $use_pattern, $path);
-my @requires = $util->get_modules($parameters, $requires_pattern, $path);
-
-my @merged_dependencies = (@uses, @requires);
-
-
+    if (-d "script") {
+	$structure[2] = "script";
+    }
+    p @structure;
+    return @structure;
+}
 
 =head1 AUTHOR
 
