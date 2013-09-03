@@ -1,6 +1,6 @@
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 6;
+use Test::More tests => 14;
 use Data::Printer;
 use feature qw(say);
 # This is not necessary, but a simple teset, see Ovid's Book
@@ -27,15 +27,31 @@ ok($searcher->requires_pattern eq $requires_pattern, '$searcher->requires_patter
 ok($searcher->parameters eq $parameters, '$searcher->parameters can\'t be accessed');
 
 my @elements = $searcher->get_files();
+can_ok($searcher, 'get_files');
 ok($elements[0] eq "lib", 'The current directory don\'t seem to be a Perl module');
 
 my $path = $searcher->build_full_path(@elements);
+can_ok($searcher, 'build_full_path');
 ok($path =~ m/\s\.\/lib \.\/Makefile\.PL/, 'The generated path is not conform');
 
-my @uses = $searcher->get_modules($searcher->parameters, $searcher->use_pattern, $path);
-# ok($uses[0] ne undef, "Ack should return a used modules list");
-# ok($uses[@uses] ne undef, "Ack should return a used modules list");
+my @uses = $searcher->get_modules($path, "use");
 
+my $uses_length = @uses - 1;
+my $mid_length = $uses_length / 2;
 
+ok($uses[0] =~ m/use\s/i, "Ack should return a used modules list");
+ok($uses[$mid_length] =~ m/use\s/i, "Ack should return a used modules list");
+ok($uses[$uses_length] =~ m/use\s/i, "Ack should return a used modules list");
 
+my @requires = $searcher->get_modules($path, "require");
+can_ok($searcher, 'get_modules');
+my $requires_length = @requires -1;
+
+my @merged_dependencies = $searcher->merge_dependencies(@uses, @requires);
+my $merged_length = @merged_dependencies;
+
+ok($merged_length == $uses_length + $requires_length + 2);
+
+my @real_modules = $searcher->make_it_real(@merged_dependencies);
+can_ok($searcher, 'make_it_real');
 

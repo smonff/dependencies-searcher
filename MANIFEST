@@ -1,6 +1,5 @@
 Changes
 lib/Dependencies/Searcher.pm
-lib/Dependencies/Searcher/Utils.pm
 Makefile.PL
 MANIFEST			This list of files
 README

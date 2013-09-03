@@ -81,21 +81,25 @@ has 'parameters' => (
     required => 1,
 );
 
-# TODO !!!!
-
+# TODO with test  impl !!!!
 # my @requires = $util->get_modules($self->parameters, $self->requires_pattern, $self->path);
-
-# my @merged_dependencies = (@uses, @requires);
 
 # Use Ack to get modules and store lines into arrays
 sub get_modules {
-    my ($self, $path) = @_;
+    my ($self, $path, $flag) = @_;
     # say $self;
     # p @_;
 
-    my $request = $self->parameters . " " . $self->use_pattern . " " . $path;
-    p $request;
-    p $request;
+    my $request = "";
+
+    if ($flag eq "use") {
+	$request = $self->parameters . " " . $self->use_pattern . " " . $path;
+    } elsif ($flag eq "require") {
+	$request = $self->parameters . " " . $self->requires_pattern . " " . $path;
+    } else {
+	die "Pattern flag is required : use or require"
+    }
+
     my @moduls = `ack $request`;
 
     if ( defined $moduls[0]) {
@@ -137,9 +141,6 @@ sub get_files {
 #  * Makefile.PL
 #  * script/ directory, if we use a Catalyst application
 # ... only if they exists !
-#
-# BUG !!!! "--perl -hi ^use  --perl -hi" 
-
 sub build_full_path {
     my ($self, @elements) = @_;
     my $path = "";
@@ -149,11 +150,28 @@ sub build_full_path {
 
     # Remove endings " ./"
     $path =~ s/\s\.\/$//;
-    # p $path;
-
     return $path;
 }
 
+sub merge_dependencies {
+    my ($self, @uses, @requires) = @_;
+    my @merged_dependencies = (@uses, @requires);
+    return @merged_dependencies;
+}
+
+# Remove special cases
+sub make_it_real {
+    my ($self, @merged) = @_;
+    my @real_modules;
+    foreach my $module ( @merged ) {
+	push(@real_modules, $module) unless
+	# Say feature
+	$module =~ m/say/
+	# Contains qw()
+	or $module =~ m/qw\(\)/;
+    }
+    return @real_modules;
+}
 
 =head1 AUTHOR
 
@@ -172,7 +190,6 @@ automatically be notified of progress on your bug as I make changes.
 
 =head1 TODOs
 
-  * "--perl -hi ^use  --perl -hi"
   * Must be implemented from a script tht use this module. The module itself
     must stay generic.
   * Test if Ack L<http://beyondgrep.com> is installed
