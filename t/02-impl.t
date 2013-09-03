@@ -32,6 +32,9 @@ ok($elements[0] eq "lib", 'The current directory don\'t seem to be a Perl module
 my $path = $searcher->build_full_path(@elements);
 ok($path =~ m/\s\.\/lib \.\/Makefile\.PL/, 'The generated path is not conform');
 
+my @uses = $searcher->get_modules($searcher->parameters, $searcher->use_pattern, $path);
+# ok($uses[0] ne undef, "Ack should return a used modules list");
+# ok($uses[@uses] ne undef, "Ack should return a used modules list");
 
 
 

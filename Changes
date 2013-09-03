@@ -1,9 +1,13 @@
 Revision history for Dependencies-Searcher
 
-0.0.2   2013-09-02 20:48
-	First version, released on an unsuspecting world. 
-	Exile the module from the Shurf::Wax distribution because it seems 
-	it could be re-used for other projects and by you. 
+0.03    2013-
+	Moosification of the module.
+	Fix a bug about version number in Changes file
+
+0.02    2013-09-02 20:48
+        First version, released on an unsuspecting world. 
+        Exile the module from the Shurf::Wax distribution because it seems 
+        it could be re-used for other projects and by you. 
       
 0.01    2013-07-21
 	Begin it as a script embedded in a Catalyst app.
