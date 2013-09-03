@@ -1,6 +1,8 @@
 Revision history for Dependencies-Searcher
 
 0.03    2013-
+	Ignore use warnings FATAL => 'all'; 
+	Ignore parsed modules minimal perl versions.
 	Moosification of the module.
 	Fix a bug about version number in Changes file
 

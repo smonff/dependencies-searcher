@@ -81,6 +81,18 @@ has 'parameters' => (
     required => 1,
 );
 
+has 'non_core_modules' => (
+    is         => 'rw',
+    isa        => 'ArrayRef[Str]',
+    default => sub { [] },
+);
+
+has 'core_modules' => (
+    is         => 'rw',
+    isa        => 'ArrayRef[Str]',
+    default => sub { [] },
+);
+
 # TODO with test  impl !!!!
 # my @requires = $util->get_modules($self->parameters, $self->requires_pattern, $self->path);
 
@@ -168,9 +180,95 @@ sub make_it_real {
 	# Say feature
 	$module =~ m/say/
 	# Contains qw()
-	or $module =~ m/qw\(\)/;
+	or $module =~ m/qw\(\)/
+	# Describes a minimal Perl version
+	or $module =~ m/^use\s[0-9]\.[0-9]+?/
+	or $module =~ m/^use\sautodie?/
+	or $module =~ m/^use\sautodie?/;
     }
     return @real_modules;
+}
+
+# Remove everything but the module name
+# Remove dirt, clean...
+sub clean_everything {
+    my @clean_modules = ();
+    my ($self, @dirty_modules) = @_;
+    foreach my $module ( @dirty_modules ) {
+
+	p $module;
+
+	# remove the 'use' and the space next
+	$module =~ s/use\s//i;
+
+	# remove the 'require', quotes and the space next
+	# but returns the captured module name (non-greedy)
+	$module =~ s/requires\s'(.*?)'/$1/i;
+	                                  # i = not case-sensitive
+	# Remove the ';' at the end of the line
+	$module =~ s/;//i;
+
+	# Remove any qw(xxxx)
+	# BUG, should remove spaces
+	$module =~ s/\sqw\([A-Za-z]+\)//i;
+
+	# Remove dirty bases and quotes.
+	# This regex that substitute My::Module::Name
+	# to a "base 'My::Module::Name'" by capturing
+	# the name in a non-greedy way
+	$module =~ s/base\s'(.*?)'/$1/i;
+
+	# Remove some warning sugar
+	$module =~ s/([a-z]+)\sFATAL\s=>\s'all'/$1/i;
+
+	push @clean_modules, $module;
+    }
+    return @clean_modules;
+}
+
+# Make each array element uniq
+sub uniq {
+    my ($self, @many_modules) = @_;
+    my @unique_modules = ();
+    my %seen = ();
+    foreach my $element ( @many_modules ) {
+	next if $seen{ $element }++;
+	p $element;
+	push @unique_modules, $element;
+    }
+    return @unique_modules;
+}
+
+# Dissociate core / non-core modules
+sub dissociate {
+    my ($self, @common_modules) = @_;
+
+    # BUG !
+
+    p @common_modules;
+    
+
+    foreach my $nc_module (@common_modules) {
+
+	p $nc_module;
+
+	my $core_list_answer = `corelist $nc_module`;
+	print "Found " . $nc_module;
+	if (
+	    (exists $Module::CoreList::version{ $] }{"$nc_module"})
+	    or
+	    ($core_list_answer =~ m/released/)
+	) {
+	    # Add to core_module
+	    p $nc_module;
+
+	    # You have to push to an array ref (Moose)
+	    # http://www.perlmonks.org/?node_id=695034
+	    push @{ $self->core_modules }, $nc_module;
+	} else {
+	    push @{ $self->non_core_modules }, $nc_module;
+	}
+    }
 }
 
 =head1 AUTHOR
@@ -186,10 +284,11 @@ the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Dependenci
 automatically be notified of progress on your bug as I make changes.
 
   * BUG non generic path
-  * BUG remove qw()
+  * BUG remove qw() and spaces
 
 =head1 TODOs
 
+  * Manage case when documentation line starts with "use" 
   * Must be implemented from a script tht use this module. The module itself
     must stay generic.
   * Test if Ack L<http://beyondgrep.com> is installed
@@ -252,7 +351,7 @@ See L<http://perldoc.perl.org/Module/CoreList.html>
 
 =item * Andy Lester's Ack
 
-Use it as the main source for the module. It was pure Perl so I've choose 
+I've use it as the main source for the module. It was pure Perl so I've choose 
 it, even if Ack is not meant for being used programatically, this use do the
 job.
 

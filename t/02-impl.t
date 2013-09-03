@@ -55,3 +55,9 @@ ok($merged_length == $uses_length + $requires_length + 2);
 my @real_modules = $searcher->make_it_real(@merged_dependencies);
 can_ok($searcher, 'make_it_real');
 
+my @clean_modules = $searcher->clean_everything(@real_modules);
+
+my @uniq_modules = $searcher->uniq(@clean_modules);
+
+$searcher->dissociate(@uniq_modules);
+
