@@ -1,20 +1,24 @@
 Revision history for Dependencies-Searcher
 
-0.03    2013-
-	Add clean_everything(), uniq() and dissociate() methods
-	Add two Moose attributes for core / non-core modules
-	Ignore use warnings FATAL => 'all'; 
-	Ignore parsed modules minimal perl versions.
-	Moosification of the module.
-	Fix a bug about version number in Changes file
+0.03    2013-09-04 01:45
+ [FIXES]
+ - [RT #88392] Fix a bug about version number in Changes file
+ - Use the CPAN App::Ack, not the the one from packages managers 
+
+ [EHANCEMENTS]
+ - Add clean_everything(), uniq() and dissociate() methods
+ - Add two Moose attributes for core / non-core modules
+ - Ignore use warnings FATAL => 'all'; 
+ - Ignore parsed modules minimal perl versions.
+ - Moosification of the module.
 
 0.02    2013-09-02 20:48
-        First version, released on an unsuspecting world. 
-        Exile the module from the Shurf::Wax distribution because it seems 
-        it could be re-used for other projects and by you. 
+ - First version, released on an unsuspecting world. 
+ - Exile the module from the Shurf::Wax distribution because it seems 
+   it could be re-used for other projects and by you. 
       
 0.01    2013-07-21
-	Begin it as a script embedded in a Catalyst app.
-	https://github.com/smonff/Shurf/commits/master/script/uses_finder.pl
+ - Begin it as a script embedded in a Catalyst app.
+   See https://github.com/smonff/Shurf/commits/master/script/uses_finder.pl
         
 

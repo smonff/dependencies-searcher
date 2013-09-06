@@ -1,14 +1,11 @@
 package Dependencies::Searcher;
 
-use 5.006;
-use strict;
-use warnings FATAL => 'all';
+use 5.010;
 use Data::Printer;
 use feature qw(say);
 use Module::CoreList qw();
 use autodie;
 use Moose;
-use Dependencies::Searcher::Utils;
 
 # Use these modules throught a system call
 # requires Module::Version;
@@ -22,11 +19,11 @@ directory and build a report that can be used as a Carton cpanfile.
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 =head1 SYNOPSIS
@@ -39,7 +36,7 @@ to Carton?
 
 You will need a tool that will check for any 'requires' or 'use' in your module package, 
 and report it into a file that could be used as a Carton cpanfile. Any duplicated entry 
-will be removed and versions are available. 
+will be removed and versions are available.
 
 This project has begun because it happens to me, and I don't want to search for modules
  to install, I just want to run a simple script that update the list in a simple way.
@@ -196,7 +193,7 @@ sub clean_everything {
     my ($self, @dirty_modules) = @_;
     foreach my $module ( @dirty_modules ) {
 
-	p $module;
+	# p $module;
 
 	# remove the 'use' and the space next
 	$module =~ s/use\s//i;
@@ -233,7 +230,7 @@ sub uniq {
     my %seen = ();
     foreach my $element ( @many_modules ) {
 	next if $seen{ $element }++;
-	p $element;
+	# p $element;
 	push @unique_modules, $element;
     }
     return @unique_modules;
@@ -246,7 +243,6 @@ sub dissociate {
     # BUG !
 
     p @common_modules;
-    
 
     foreach my $nc_module (@common_modules) {
 
@@ -271,6 +267,13 @@ sub dissociate {
     }
 }
 
+# Get number of modules
+sub get_modules_numbers {
+    my ($self, @modules_set) = @_;
+    my $modules_number = @modules_set;
+    return $modules_number;
+}
+
 =head1 AUTHOR
 
 smonff, C<< <smonff at gmail.com> >>
@@ -288,16 +291,18 @@ automatically be notified of progress on your bug as I make changes.
 
 =head1 TODOs
 
+  * Transfer script to module
+  * Add dependencies to Makefile.PL => OK
   * Manage case when documentation line starts with "use" 
-  * Must be implemented from a script tht use this module. The module itself
-    must stay generic.
-  * Test if Ack L<http://beyondgrep.com> is installed
-  * Add "our $VERSION = '0.03';" to all Shurf::Wax modules"
+  * Must be implemented from a script that use this module. The module itself
+    must stay generic => OK
+  * Tests => OK
+  * Test if Ack L<http://beyondgrep.com> is installed =>  OK
   * Compare how many modules are found at the beginning of the process
     and at the end. If it's different, it's bad...
-  * Modularize and use functions
-  * Should mention version of the installed module
-  * Output the script non-core-modules to Carton's cpanfile
+  * Modularize and use functions => OK
+  * Should mention version of the installed module => OK
+  * Output the script non-core-modules to Carton's cpanfile => OK
   * Search for lines containings "require" => ok
   * test if modules are Core modules (don't need to install it then) => OK
 

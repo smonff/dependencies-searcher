@@ -61,3 +61,11 @@ my @uniq_modules = $searcher->uniq(@clean_modules);
 
 $searcher->dissociate(@uniq_modules);
 
+#foreach my $module ($searcher->non_core_modules) {
+#    if ($module =~ m/Moose/) {
+#	ok($module =~ m/Moose/, "Moose should be found");
+#	last;
+#    }
+#}
+
+# ok($searcher->core_modules =~ m//);
