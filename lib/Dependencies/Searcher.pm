@@ -272,18 +272,6 @@ sub dissociate {
     # p $self->core_modules;
 }
 
-# Get number of modules
-sub get_modules_number {
-    my ($self, $core_flag) = @_;
-
-    if ($core_flag eq "core") {
-	# p $self->core_modules->count_core_modules;
-	# return  $self->core_modules->count_core_modules;
-    } elsif ($core_flag eq "non_core") {
-        p $self->count_non_core_modules;
-	return  $self->non_core_modules->count_non_core_modules;
-    }
-}
 
 =head1 AUTHOR
 

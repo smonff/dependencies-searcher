@@ -1,6 +1,6 @@
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 15;
+use Test::More tests => 16;
 use Data::Printer;
 use feature qw(say);
 # This is not necessary, but a simple test, see Ovid's Book
@@ -61,9 +61,8 @@ my @uniq_modules = $searcher->uniq(@clean_modules);
 
 $searcher->dissociate(@uniq_modules);
 
-# my $core_modules_number = $searcher->get_modules_number("core");
-# ok($core_modules_number == 4, "core numbers :()");
 # This is a shitty test, have to increment it each time we add modules...
+ok($searcher->count_core_modules eq 4, "core numbers :()");
 ok($searcher->count_non_core_modules eq 2, "non core numbers :()");
 
 #ok($modules_number == $searcher->core_modules);
