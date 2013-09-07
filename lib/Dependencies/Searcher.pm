@@ -79,15 +79,25 @@ has 'parameters' => (
 );
 
 has 'non_core_modules' => (
+    traits     => ['Array'],
     is         => 'rw',
     isa        => 'ArrayRef[Str]',
-    default => sub { [] },
+    default    => sub { [] },
+    handles    => {
+	add_non_core_module    => 'push',
+	count_non_core_modules => 'count',
+    },
 );
 
 has 'core_modules' => (
+    traits     => ['Array'],
     is         => 'rw',
     isa        => 'ArrayRef[Str]',
     default => sub { [] },
+    handles    => {
+	add_core_module    => 'push',
+	count_core_modules => 'count',
+    },
 );
 
 # TODO with test  impl !!!!
@@ -96,8 +106,6 @@ has 'core_modules' => (
 # Use Ack to get modules and store lines into arrays
 sub get_modules {
     my ($self, $path, $flag) = @_;
-    # say $self;
-    # p @_;
 
     my $request = "";
 
@@ -141,7 +149,6 @@ sub get_files {
     if (-d "script") {
 	$structure[2] = "script";
     }
-    # p @structure;
     return @structure;
 }
 
@@ -174,7 +181,7 @@ sub make_it_real {
     my @real_modules;
     foreach my $module ( @merged ) {
 	push(@real_modules, $module) unless
-	# Say feature
+
 	$module =~ m/say/
 	# Contains qw()
 	or $module =~ m/qw\(\)/
@@ -192,8 +199,6 @@ sub clean_everything {
     my @clean_modules = ();
     my ($self, @dirty_modules) = @_;
     foreach my $module ( @dirty_modules ) {
-
-	# p $module;
 
 	# remove the 'use' and the space next
 	$module =~ s/use\s//i;
@@ -230,7 +235,6 @@ sub uniq {
     my %seen = ();
     foreach my $element ( @many_modules ) {
 	next if $seen{ $element }++;
-	# p $element;
 	push @unique_modules, $element;
     }
     return @unique_modules;
@@ -240,38 +244,45 @@ sub uniq {
 sub dissociate {
     my ($self, @common_modules) = @_;
 
-    # BUG !
-
-    p @common_modules;
-
     foreach my $nc_module (@common_modules) {
 
-	p $nc_module;
-
 	my $core_list_answer = `corelist $nc_module`;
-	print "Found " . $nc_module;
+	# print "Found " . $nc_module;
 	if (
 	    (exists $Module::CoreList::version{ $] }{"$nc_module"})
 	    or
 	    ($core_list_answer =~ m/released/)
 	) {
 	    # Add to core_module
-	    p $nc_module;
 
+	    # The old way
 	    # You have to push to an array ref (Moose)
 	    # http://www.perlmonks.org/?node_id=695034
-	    push @{ $self->core_modules }, $nc_module;
+	    # push @{ $self->core_modules }, $nc_module;
+
+	    # The "Moose" trait way
+	    $self->add_core_module($nc_module);
+
 	} else {
-	    push @{ $self->non_core_modules }, $nc_module;
+	    $self->add_non_core_module($nc_module);
+	    # push @{ $self->non_core_modules }, $nc_module;
 	}
     }
+    # p $self->non_core_modules;
+    # p $self->core_modules;
 }
 
 # Get number of modules
-sub get_modules_numbers {
-    my ($self, @modules_set) = @_;
-    my $modules_number = @modules_set;
-    return $modules_number;
+sub get_modules_number {
+    my ($self, $core_flag) = @_;
+
+    if ($core_flag eq "core") {
+	# p $self->core_modules->count_core_modules;
+	# return  $self->core_modules->count_core_modules;
+    } elsif ($core_flag eq "non_core") {
+        p $self->count_non_core_modules;
+	return  $self->non_core_modules->count_non_core_modules;
+    }
 }
 
 =head1 AUTHOR

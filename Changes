@@ -6,6 +6,11 @@ Revision history for Dependencies-Searcher
  - Use the CPAN App::Ack, not the the one from packages managers 
 
  [EHANCEMENTS]
+ - Can now get the count of core / non-core modules 
+ - Add some Moose helper traits for ArrayRef attributes, now you can
+   add and count and the code is easiest to read !
+ - Clean a lot of logs
+ - Change the dissociate() implementation with Moose traits 
  - Add clean_everything(), uniq() and dissociate() methods
  - Add two Moose attributes for core / non-core modules
  - Ignore use warnings FATAL => 'all'; 
