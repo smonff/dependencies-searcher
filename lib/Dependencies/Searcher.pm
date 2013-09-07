@@ -268,8 +268,32 @@ sub dissociate {
 	    # push @{ $self->non_core_modules }, $nc_module;
 	}
     }
-    # p $self->non_core_modules;
-    # p $self->core_modules;
+}
+
+# Generate the cpanfile for Carton
+# Open a file handle to > cpanfile
+sub generate_report {
+
+    my $self = shift;
+
+    open my $cpanfile_fh, '>', 'cpanfile';
+
+    foreach my $module_name ( @{$self->non_core_modules} ) {
+
+	# From Module::Version command line utility
+	my $version = `mversion $module_name`;
+
+	# Add the "requires $module_name\n" to the next line of the file
+	chomp($module_name, $version);
+
+	if ($version =~ m/[0-9]\.[0-9]+/ ) {
+	    say $cpanfile_fh "requires " . $module_name . ", " . $version;
+	} else {
+	    say $cpanfile_fh "requires " . $module_name;
+	}
+
+    }
+    close $cpanfile_fh;
 }
 
 

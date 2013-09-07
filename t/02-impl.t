@@ -65,13 +65,5 @@ $searcher->dissociate(@uniq_modules);
 ok($searcher->count_core_modules eq 4, "core numbers :()");
 ok($searcher->count_non_core_modules eq 2, "non core numbers :()");
 
-#ok($modules_number == $searcher->core_modules);
+$searcher->generate_report($searcher->non_core_modules);
 
-#foreach my $module ($searcher->non_core_modules) {
-#    if ($module =~ m/Moose/) {
-#	ok($module =~ m/Moose/, "Moose should be found");
-#	last;
-#    }
-#}
-
-# ok($searcher->core_modules =~ m//);
