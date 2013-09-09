@@ -7,57 +7,13 @@ use Module::CoreList qw();
 use autodie;
 use Moose;
 
-# Use these modules throught a system call
-# requires Module::Version;
-# requires App::Ack;
+# These modules will be used throught a system call
+# Module::Version;
+# App::Ack;
+
+our $VERSION = '0.03_01';
 
 
-=head1 NAME
-
-Dependencies::Searcher - Search recursively dependencies used in a module's 
-directory and build a report that can be used as a Carton cpanfile.
-
-=head1 VERSION
-
-Version 0.03
-
-=cut
-
-our $VERSION = '0.03';
-
-
-=head1 SYNOPSIS
-
-Maybe you don't want to have to list all the dependencies of your application by hand,
-or maybe you forgot to do it for a long time ago. During this time, you've add lots of
-CPAN modules. Carton is here to help you manage dependencies between your development 
-environment and production, but how to keep track of the list of modules you will give
-to Carton?
-
-You will need a tool that will check for any 'requires' or 'use' in your module package, 
-and report it into a file that could be used as a Carton cpanfile. Any duplicated entry 
-will be removed and versions are available.
-
-This project has begun because it happens to me, and I don't want to search for modules
- to install, I just want to run a simple script that update the list in a simple way.
-
-Perhaps a little code snippet.
-
-    use Dependencies::Searcher;
-
-    my $foo = Dependencies::Searcher->new();
-    ...
-
-
-=head1 SUBROUTINES/METHODS
-
-=head2 function1
-
-=cut
-
-=head2 function2
-
-=cut
 
 # Init parameters
 has 'use_pattern' => (
@@ -100,10 +56,7 @@ has 'core_modules' => (
     },
 );
 
-# TODO with test  impl !!!!
-# my @requires = $util->get_modules($self->parameters, $self->requires_pattern, $self->path);
 
-# Use Ack to get modules and store lines into arrays
 sub get_modules {
     my ($self, $path, $flag) = @_;
 
@@ -152,11 +105,7 @@ sub get_files {
     return @structure;
 }
 
-# Retrieve names of :
-#  * lib/ directory, if it don't exist, we don't care and die
-#  * Makefile.PL
-#  * script/ directory, if we use a Catalyst application
-# ... only if they exists !
+
 sub build_full_path {
     my ($self, @elements) = @_;
     my $path = "";
@@ -193,8 +142,7 @@ sub make_it_real {
     return @real_modules;
 }
 
-# Remove everything but the module name
-# Remove dirt, clean...
+
 sub clean_everything {
     my @clean_modules = ();
     my ($self, @dirty_modules) = @_;
@@ -228,7 +176,7 @@ sub clean_everything {
     return @clean_modules;
 }
 
-# Make each array element uniq
+
 sub uniq {
     my ($self, @many_modules) = @_;
     my @unique_modules = ();
@@ -240,7 +188,7 @@ sub uniq {
     return @unique_modules;
 }
 
-# Dissociate core / non-core modules
+
 sub dissociate {
     my ($self, @common_modules) = @_;
 
@@ -270,7 +218,6 @@ sub dissociate {
     }
 }
 
-# Generate the cpanfile for Carton
 # Open a file handle to > cpanfile
 sub generate_report {
 
@@ -296,6 +243,107 @@ sub generate_report {
     close $cpanfile_fh;
 }
 
+=head1 NAME
+
+Dependencies::Searcher - Search recursively dependencies used in a module's 
+directory and build a report that can be used as a Carton cpanfile.
+
+=cut
+
+=head1 SYNOPSIS
+
+Maybe you don't want to have to list all the dependencies of your application by hand,
+or maybe you forgot to do it for a long time ago. During this time, you've add lots of
+CPAN modules. Carton is here to help you manage dependencies between your development 
+environment and production, but how to keep track of the list of modules you will give
+to Carton?
+
+You will need a tool that will check for any 'requires' or 'use' in your module package, 
+and report it into a file that could be used as a Carton cpanfile. Any duplicated entry 
+will be removed and versions are available.
+
+This project has begun because it happens to me, and I don't want to search for modules
+to install, I just want to run a simple script that update the list in a simple way.
+
+    use Dependencies::Searcher;
+
+    my $searcher = Dependencies::Searcher->new();
+    my @elements = $searcher->get_files();
+    my $path = $searcher->build_full_path(@elements);
+    my @uses = $searcher->get_modules($path, "use");		
+    my @uniq_modules = $searcher->uniq(@uses);
+
+    $searcher->dissociate(@uniq_modules);
+
+    $searcher->generate_report($searcher->non_core_modules);
+
+=head1 SUBROUTINES/METHODS
+
+This is work in progress...
+
+=head2 get_modules
+
+Us-e Ack to get modules and store lines into arrays
+
+=cut
+
+=head2 get_files
+
+=cut
+
+=head2 build_full_path
+
+Retrieve names of :
+ * lib/ directory, if it don't exist, we don't care and die
+ * Makefile.PL
+ * script/ directory, if we use a Catalyst application
+ * ... only if they exists !
+
+=cut
+
+=head2 merge_dependencies 
+
+Merge use and requires
+
+=cut
+
+=head2 make_it_real
+
+Remove special cases that can't be interesting.
+
+=cut
+
+=head2 clean_everything
+
+Remove everything but the module name. Remove dirt, clean stuffs...
+
+=cut
+
+=head2 uniq
+
+Make each array element uniq
+
+=cut
+
+=head2 dissociate
+
+Dissociate core / non-core modules
+
+=cut
+
+=head2 generate_report
+
+Generate the cpanfile for Carton, with optionnal version number
+
+=cut
+
+=head2
+
+=cut
+
+=head2
+
+=cut
 
 =head1 AUTHOR
 
@@ -303,31 +351,12 @@ smonff, C<< <smonff at gmail.com> >>
 
 =head1 BUGS
 
-Bugtracker : https://github.com/smonff/dependencies-searcher/issues
-
 Please report any bugs or feature requests to C<bug-dependencies-searcher at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Dependencies-Searcher>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-  * BUG non generic path
-  * BUG remove qw() and spaces
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Dependencies-Searcher>.  I will be notified, and then you'll automatically be notified of progress on your bug as I make changes.
 
 =head1 TODOs
 
-  * Transfer script to module
-  * Add dependencies to Makefile.PL => OK
-  * Manage case when documentation line starts with "use" 
-  * Must be implemented from a script that use this module. The module itself
-    must stay generic => OK
-  * Tests => OK
-  * Test if Ack L<http://beyondgrep.com> is installed =>  OK
-  * Compare how many modules are found at the beginning of the process
-    and at the end. If it's different, it's bad...
-  * Modularize and use functions => OK
-  * Should mention version of the installed module => OK
-  * Output the script non-core-modules to Carton's cpanfile => OK
-  * Search for lines containings "require" => ok
-  * test if modules are Core modules (don't need to install it then) => OK
+https://github.com/smonff/dependencies-searcher/issues
 
 =head1 SUPPORT
 

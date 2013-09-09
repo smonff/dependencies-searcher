@@ -4,8 +4,7 @@ Makefile.PL
 MANIFEST			This list of files
 README
 t/00-load.t
-t/01-util.t
-t/02-impl.t
+t/01-impl.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t

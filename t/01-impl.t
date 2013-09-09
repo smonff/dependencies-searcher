@@ -1,8 +1,9 @@
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 16;
+use Test::More tests => 18;
 use Data::Printer;
 use feature qw(say);
+use IO::File;
 # This is not necessary, but a simple test, see Ovid's Book
 use Dependencies::Searcher;
 
@@ -65,5 +66,16 @@ $searcher->dissociate(@uniq_modules);
 ok($searcher->count_core_modules eq 4, "core numbers :()");
 ok($searcher->count_non_core_modules eq 2, "non core numbers :()");
 
+my $cpanfile = IO::File->new('cpanfile', '>');
+ok($cpanfile, "Open a file handle on cpanfile");
+$cpanfile->close;
+
 $searcher->generate_report($searcher->non_core_modules);
 
+$cpanfile = IO::File->new('cpanfile', '<');
+
+my $line = $cpanfile->getline;
+ok($line =~ m/^requires\s[A-Za-z]/, "Cpanfile containes requires lines");
+
+# Have to test if cpanfile contains modules names and stuff
+#ok($line =~ m/^requires\s[A-Za-z]+{[::]*[A-Za-z]}*/, "Cpanfile containes requires lines");

@@ -15,6 +15,7 @@ WriteMakefile(
     },
     BUILD_REQUIRES => {
         'Test::More' => 0,
+	'IO::File'   => 0,
     },
     PREREQ_PM => {
 	'App::Ack'        => 0,
