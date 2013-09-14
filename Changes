@@ -1,9 +1,18 @@
 Revision history for Dependencies-Searcher
 
-0.03_01    2013-09-09 07:57
+0.05_02 2013-09-
+ [EHANCEMENTS]
+ - Add a MIN_PERL_VERSION (5.010) in Makefile.PL as recommanded at CPANTS
+
+0.05_01 2013-09-10 23:10
+ [EHANCEMENTS]
+ - Test Ack availability in tests
+ - Remove tests that asks for a static number of results (non-predictable) 
+
+0.04    2013-09-09 17:38:24 
  [FIXES]
- - [RT #88528&] Dependencies::Searcher::Utils have been removed
- try to clean up test failures
+ - [RT #88528] Dependencies::Searcher::Utils have been removed
+   trying to clean up test failures
 
 0.03    2013-09-04 01:45
  [FIXES]

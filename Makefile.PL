@@ -24,6 +24,8 @@ WriteMakefile(
 	'Moose'           => 0,
 	'Test::More'      => 0,
     },
+
+    MIN_PERL_VERSION => '5.010',
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Dependencies-Searcher-*' },
 );
