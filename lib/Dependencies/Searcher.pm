@@ -6,13 +6,14 @@ use feature qw(say);
 use Module::CoreList qw();
 use autodie;
 use Moose;
+use IPC::Cmd qw[can_run run];
+use Dependencies::Searcher::AckRequester;
 
 # These modules will be used throught a system call
 # Module::Version;
 # App::Ack;
 
-our $VERSION = '0.03_01';
-
+our $VERSION = '0.05_02';
 
 
 # Init parameters
@@ -56,21 +57,34 @@ has 'core_modules' => (
     },
 );
 
-
+#
+# BUGGED : TRY TO USE IPC::Cmd, changed API !!!
+#
 sub get_modules {
     my ($self, $path, $flag) = @_;
 
-    my $request = "";
+    # my $ack_requester = Dependencies::Searcher::AckRequester->new();
 
-    if ($flag eq "use") {
-	$request = $self->parameters . " " . $self->use_pattern . " " . $path;
+    my $request = "";
+    my @moduls;
+    my $cmd;
+
+    my $full_path = can_run('ack') or warn 'Ack is not installed!';
+
+    if ($flag eq "use") {                                          # Not portable, not dynamic
+	$cmd = [$full_path, $self->parameters, $self->use_pattern, 'lib/', 'Makefile.PL'];
+	# $request = $self->parameters . " " . $self->use_pattern . " " . $path;
+
     } elsif ($flag eq "require") {
-	$request = $self->parameters . " " . $self->requires_pattern . " " . $path;
+	$cmd = [$full_path, $self->parameters, $self->requires_pattern, 'lib/', 'Makefile.PL'];
+	# $request = $self->parameters . " " . $self->requires_pattern . " " . $path;
     } else {
-	die "Pattern flag is required : use or require"
+	die "Pattern flag is required : use or require";
     }
 
-    my @moduls = `ack $request`;
+    my $ack_requester = Dependencies::Searcher::AckRequester->new();
+
+    @moduls = `ack $request`;
 
     if ( defined $moduls[0]) {
 	if ($moduls[0] =~ m/^use/ or $moduls[0] =~ m/^require/) {
@@ -209,6 +223,7 @@ sub dissociate {
 	    # push @{ $self->core_modules }, $nc_module;
 
 	    # The "Moose" trait way
+	    # https://metacpan.org/module/Moose::Meta::Attribute::Native::Trait::Array
 	    $self->add_core_module($nc_module);
 
 	} else {

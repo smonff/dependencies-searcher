@@ -2,6 +2,7 @@ Revision history for Dependencies-Searcher
 
 0.05_02 2013-09-
  [EHANCEMENTS]
+ - Build an independant module for the Ack part, that returns an array containing interesting lines
  - Add a MIN_PERL_VERSION (5.010) in Makefile.PL as recommanded at CPANTS
 
 0.05_01 2013-09-10 23:10
