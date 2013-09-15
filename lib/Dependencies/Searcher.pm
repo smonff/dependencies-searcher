@@ -86,23 +86,24 @@ sub get_files {
     $structure[0] = "";
     $structure[1] = "";
     $structure[2] = "";
-    if (-d $prefix."lib") {
+    if (-d $prefix."/lib") {
 
-	$structure[0] = $prefix."lib";
+	$structure[0] = $prefix."/lib";
     } else {
+	# 
+	# TEST IF THE PATH IS OK ???
+	#
+	#
 	die "Don't look like we are working on a Perl module";
     }
 
-    if (-f $prefix."Makefile.PL") {
-	$structure[1] = $prefix."Makefile.PL";
+    if (-f $prefix."/Makefile.PL") {
+	$structure[1] = $prefix."/Makefile.PL";
     }
 
-    if (-d $prefix."script") {
-	$structure[2] = $prefix."script";
+    if (-d $prefix."/script") {
+	$structure[2] = $prefix."/script";
     }
-    p @structure;
-    p @structure;
-    p @structure;
     p @structure;
 
     return @structure;

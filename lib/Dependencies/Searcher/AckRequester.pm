@@ -76,7 +76,8 @@ sub ack {
 
 	push @modules, split(/\n/m, $$full_buffer[0]);
     } else {
-	die "IPC::Cmd failed with error $error_message";
+	# POTENTIAL BUG when requires or use is found !!!
+	warn "IPC::Cmd failed with error $error_message";
     }
 
     p @modules;
