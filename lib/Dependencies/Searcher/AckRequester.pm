@@ -7,25 +7,12 @@ use Module::CoreList qw();
 use autodie;
 use Moose;
 use IPC::Cmd qw[can_run run];
-use Text::Buffer;
 
 # These modules will be used throught a system call
 # Module::Version;
 # App::Ack;
 
 our $VERSION = '0.05_02';
-
-has 'cmd' => (
-    traits     => ['Array'],
-    is         => 'rw',
-    isa        => 'ArrayRef[Str]',
-    default    => sub { [] },
-    required   => 0,
-    handles    => {
-	add_param    => 'push',
-    },
-);
-
 has 'full_path' => (
   is  => 'rw',
   isa => 'Str',
@@ -63,7 +50,24 @@ sub ack {
 
     p $cmd;
 
+    # Here get the current dirctory
+    #my $distrib_path = cwd();
+
+    my $distrib_path = `pwd`;
+    #p $distrib_path;
+    #p $distrib_path;
+
     my($success, $error_message, $full_buffer, $stdout_buffer, $stderr_buffer) = run( command => $cmd, verbose => 0 );
+
+    my $cmd2 = ['pwd'];
+
+    my($success2, $error_message2, $full_buffer2, $stdout_buffer2, $stderr_buffer2) = run( 
+	command => $cmd2,
+	verbose => 0
+    );
+
+    p $full_buffer2;
+    p $full_buffer2;
 
     my @modules;
 
@@ -71,9 +75,11 @@ sub ack {
     if ($success) {
 
 	push @modules, split(/\n/m, $$full_buffer[0]);
+    } else {
+	die "IPC::Cmd failed with error $error_message";
     }
 
-    # p @modules;
+    p @modules;
     return @modules;
 }
 

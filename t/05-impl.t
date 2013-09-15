@@ -1,6 +1,6 @@
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 17;
+use Test::More tests => 12;
 use Data::Printer;
 use feature qw(say);
 use IO::File;
@@ -9,36 +9,26 @@ use IPC::Cmd qw[can_run run];
 use Dependencies::Searcher;
 
 
-my $use_pattern = "^use ";
-my $requires_pattern = "^requires ";
-# Parameters for Ack2 :
-    #  * Only pm files
-    #  * No filename
-    #  * Ignore case
-my $parameters = "--perl -hi";
-
-my $searcher = Dependencies::Searcher->new({
-    use_pattern  => $use_pattern,
-    requires_pattern => $requires_pattern,
-    parameters => $parameters,
-});
+my $searcher = Dependencies::Searcher->new();
 
 ok($searcher, "Searcher can not be created");
-ok($searcher->use_pattern eq $use_pattern, '$searcher->use_pattern can\'t be accessed');
-ok($searcher->requires_pattern eq $requires_pattern, '$searcher->requires_pattern can\'t be accessed');
-ok($searcher->parameters eq $parameters, '$searcher->parameters can\'t be accessed');
+#ok($searcher->use_pattern eq $use_pattern, '$searcher->use_pattern can\'t be accessed');
+#ok($searcher->requires_pattern eq $requires_pattern, '$searcher->requires_pattern can\'t be accessed');
+#ok($searcher->parameters eq $parameters, '$searcher->parameters can\'t be accessed');
 
 my @elements = $searcher->get_files();
 can_ok($searcher, 'get_files');
 ok($elements[0] eq "lib", 'The current directory don\'t seem to be a Perl module');
+p @elements;
 
-my $path = $searcher->build_full_path(@elements);
-can_ok($searcher, 'build_full_path');
-ok($path =~ m/\s\.\/lib \.\/Makefile\.PL/, 'The generated path is not conform');
+#my $path = $searcher->build_full_path(@elements);
+#can_ok($searcher, 'build_full_path');
+#ok($path =~ m/\s\.\/lib \.\/Makefile\.PL/, 'The generated path is not conform');
 
 ok(can_run('ack'), "Ack is not installed!");
 
-my @uses = $searcher->get_modules($path, "use");
+my @uses = $searcher->get_modules("^use", @elements);
+
 
 my $uses_length = @uses - 1;
 my $mid_length = $uses_length / 2;
@@ -47,7 +37,7 @@ ok($uses[0] =~ m/use\s/i, "Ack should return a used modules list");
 ok($uses[$mid_length] =~ m/use\s/i, "Ack should return a used modules list");
 ok($uses[$uses_length] =~ m/use\s/i, "Ack should return a used modules list");
 
-my @requires = $searcher->get_modules($path, "require");
+my @requires = $searcher->get_modules("^require", @elements);
 can_ok($searcher, 'get_modules');
 my $requires_length = @requires -1;
 

@@ -8,6 +8,7 @@ use autodie;
 use Moose;
 use IPC::Cmd qw[can_run run];
 use Dependencies::Searcher::AckRequester;
+use Cwd;
 
 # These modules will be used throught a system call
 # Module::Version;
@@ -17,24 +18,6 @@ our $VERSION = '0.05_02';
 
 
 # Init parameters
-has 'use_pattern' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-);
-
-has 'requires_pattern' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-);
-
-has 'parameters' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 1,
-);
-
 has 'non_core_modules' => (
     traits     => ['Array'],
     is         => 'rw',
@@ -61,30 +44,27 @@ has 'core_modules' => (
 # BUGGED : TRY TO USE IPC::Cmd, changed API !!!
 #
 sub get_modules {
-    my ($self, $path, $flag) = @_;
+    my ($self, $pattern, @path) = @_;
 
-    # my $ack_requester = Dependencies::Searcher::AckRequester->new();
-
-    my $request = "";
-    my @moduls;
-    my $cmd;
-
-    my $full_path = can_run('ack') or warn 'Ack is not installed!';
-
-    if ($flag eq "use") {                                          # Not portable, not dynamic
-	$cmd = [$full_path, $self->parameters, $self->use_pattern, 'lib/', 'Makefile.PL'];
-	# $request = $self->parameters . " " . $self->use_pattern . " " . $path;
-
-    } elsif ($flag eq "require") {
-	$cmd = [$full_path, $self->parameters, $self->requires_pattern, 'lib/', 'Makefile.PL'];
-	# $request = $self->parameters . " " . $self->requires_pattern . " " . $path;
-    } else {
-	die "Pattern flag is required : use or require";
-    }
+    #p @path;
+    #p $pattern;
 
     my $ack_requester = Dependencies::Searcher::AckRequester->new();
 
-    @moduls = `ack $request`;
+    my @moduls;
+
+    my @params = ('--perl', '-hi', $pattern, @path);
+
+    p $pattern;
+    p @params;
+    p @params;
+
+    my $requester = Dependencies::Searcher::AckRequester->new();
+    my $ack_path = $requester->get_path();
+    my $cmd_use = $requester->build_cmd(@params);
+    @moduls = $requester->ack($cmd_use);
+
+    p @moduls;
 
     if ( defined $moduls[0]) {
 	if ($moduls[0] =~ m/^use/ or $moduls[0] =~ m/^require/) {
@@ -93,29 +73,38 @@ sub get_modules {
 	    die "Failed to retrieve modules with Ack";
 	}
     } else {
-	say "No $self->pattern found !";
+	say "No use or require found !";
     }
 }
 
 sub get_files {
     my $self = shift;
+    # This prefix will allow a more portable module
+    my $prefix = getcwd();
+
     my @structure;
     $structure[0] = "";
     $structure[1] = "";
     $structure[2] = "";
-    if (-d "lib") {
-	$structure[0] = "lib";
+    if (-d $prefix."lib") {
+
+	$structure[0] = $prefix."lib";
     } else {
 	die "Don't look like we are working on a Perl module";
     }
 
-    if (-f "Makefile.PL") {
-	$structure[1] = "Makefile.PL";
+    if (-f $prefix."Makefile.PL") {
+	$structure[1] = $prefix."Makefile.PL";
     }
 
-    if (-d "script") {
-	$structure[2] = "script";
+    if (-d $prefix."script") {
+	$structure[2] = $prefix."script";
     }
+    p @structure;
+    p @structure;
+    p @structure;
+    p @structure;
+
     return @structure;
 }
 
