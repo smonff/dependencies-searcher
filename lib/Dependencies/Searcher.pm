@@ -18,31 +18,14 @@ our $VERSION = '0.05_02';
 
 =head1 NAME
 
-Dependencies::Searcher - Search recursively dependencies used in a module's directory 
-and build a report that can be used as a Carton cpanfile.
+Dependencies::Searcher - Manage your dependencies list in a convenient way
 
 =cut
 
 =head1 SYNOPSIS
 
-Maybe you don't want to have to list all the dependencies of your Perl application by 
-hand and want an automated way to build it. Maybe you forgot to do it for a long time 
-ago. During this time, you've add lots of CPAN modules. Carton is here to help you 
-manage dependencies between your development environment and production, but how to 
-keep track of the list of modules you will pass to to Carton?
-
-Event if it is a no brainer to keep track of this list, it can be much better not to 
-have to do it.
-
-You will need a tool that will check for any 'requires' or 'use' in your module package,
-and report it into a file that could be used as a Carton cpanfile. Any duplicated entry
-will be removed and modules versions will be checked and made available. Core modules
-will be ommited because you don't need to install them.
-
-This project has begun because it happens to me, and I don't want to search for modules 
-to install by hand, I just want to run a simple script that update the list in a simple 
-way. It was much more longer to write the module than to search by hand but I wish it 
-will be usefull for others.
+Search recursively dependencies used in a module's directory and build a report that 
+can be used as a Carton cpanfile.
 
     use Dependencies::Searcher;
 
@@ -55,6 +38,29 @@ will be usefull for others.
     $searcher->dissociate(@uniq_modules);
 
     $searcher->generate_report($searcher->non_core_modules);
+
+=cut
+
+=head1 DESCRIPTION
+
+Maybe you don't want to have to list all the dependencies of your Perl application by
+hand and want an automated way to build it. Maybe you forgot to do it for a long time
+ago. During this time, you've add lots of CPAN modules. Carton is here to help you
+manage dependencies between your development environment and production, but how to
+keep track of the list of modules you will pass to to Carton?
+
+Event if it is a no brainer to keep track of this list, it can be much better not to
+have to do it.
+
+You will need a tool that will check for any 'requires' or 'use' in your module package,
+and report it into a file that could be used as a Carton cpanfile. Any duplicated entry
+will be removed and modules versions will be checked and made available. Core modules
+will be ommited because you don't need to install them.
+
+This project has begun because it happens to me, and I don't want to search for modules
+to install by hand, I just want to run a simple script that update the list in a simple
+way. It was much more longer to write the module than to search by hand but I wish it
+will be usefull for others.
 
 =cut
 
@@ -96,16 +102,10 @@ sub get_modules {
 
     my @params = ('--perl', '-hi', $pattern, @path);
 
-    p $pattern;
-    p @params;
-    p @params;
-
     my $requester = Dependencies::Searcher::AckRequester->new();
     my $ack_path = $requester->get_path();
     my $cmd_use = $requester->build_cmd(@params);
     @moduls = $requester->ack($cmd_use);
-
-    p @moduls;
 
     if ( defined $moduls[0]) {
 	if ($moduls[0] =~ m/^use/ or $moduls[0] =~ m/^require/) {
@@ -145,7 +145,6 @@ sub get_files {
     if (-d $prefix."/script") {
 	$structure[2] = $prefix."/script";
     }
-    p @structure;
 
     return @structure;
 }
@@ -293,7 +292,7 @@ sub generate_report {
 
 This is work in progress...
 
-=head Dependencies::Searcher->get_modules()
+=head2 Dependencies::Searcher->get_modules()
 
 Us-e Ack to get modules and store lines into arrays
 

@@ -18,8 +18,7 @@ ok($searcher, "Searcher can not be created");
 
 my @elements = $searcher->get_files();
 can_ok($searcher, 'get_files');
-ok($elements[0] eq "lib", 'The current directory don\'t seem to be a Perl module');
-p @elements;
+ok($elements[0] =~ /lib/, 'The current directory don\'t seem to be a Perl module');
 
 #my $path = $searcher->build_full_path(@elements);
 #can_ok($searcher, 'build_full_path');

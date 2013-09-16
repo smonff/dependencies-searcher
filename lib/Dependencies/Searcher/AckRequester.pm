@@ -23,7 +23,6 @@ sub get_path {
 
     my $tmp_full_path = can_run('ack') or warn 'Ack is not installed!';
     $self->full_path($tmp_full_path);
-    # p $self->full_path;
 
   return $self->full_path;
 
@@ -36,8 +35,6 @@ sub build_cmd {
     my @cmd = ($self->full_path, @params);
     my $cmd_href = \@cmd;
 
-    # p $cmd_href;
-
     return $cmd_href;
 }
 
@@ -48,39 +45,16 @@ sub ack {
 
     my ($self, $cmd) = @_;
 
-    p $cmd;
-
-    # Here get the current dirctory
-    #my $distrib_path = cwd();
-
-    my $distrib_path = `pwd`;
-    #p $distrib_path;
-    #p $distrib_path;
-
     my($success, $error_message, $full_buffer, $stdout_buffer, $stderr_buffer) = run( command => $cmd, verbose => 0 );
-
-    my $cmd2 = ['pwd'];
-
-    my($success2, $error_message2, $full_buffer2, $stdout_buffer2, $stderr_buffer2) = run( 
-	command => $cmd2,
-	verbose => 0
-    );
-
-    p $full_buffer2;
-    p $full_buffer2;
 
     my @modules;
 
-    # p @$stdout_buffer;
     if ($success) {
-
 	push @modules, split(/\n/m, $$full_buffer[0]);
     } else {
-	# POTENTIAL BUG when requires or use is found !!!
-	warn "IPC::Cmd failed with error $error_message";
+	say "No module have been found or IPC::Cmd failed with error $error_message";
     }
 
-    p @modules;
     return @modules;
 }
 
@@ -104,7 +78,11 @@ Returns the Ack full path if installed. It will be used by ICP::Cmd.
 
 =cut
 
-=head2 ack
+=head2 build_cmd()
+
+=cut
+
+=head2 ack()
 
 Returns an array of potentially interesting lines, containing dependencies names 
 
