@@ -1,15 +1,14 @@
 Dependencies-Searcher
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+Dependencies::Searcher - Search recursively dependencies used in a Perl module's root directory and build a report that can be used as a Carton cpanfile.
 
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
+Maybe you don't want to have to list all the dependencies of your Perl application by hand and want an automated way to build it. Maybe you forgot to do it for a long time ago. During this time, you've add lots of CPAN modules. Carton is here to help you manage dependencies between your development environment and production, but how to keep track of the list of modules you will pass to to Carton?
+
+Event if it is not a no brainer to keep track of this list, it's can be much better not to have to do it.
+
+You will need a tool that will check for any 'requires' or 'use' in your module package, and report it into a file that could be used as a Carton cpanfile. Any duplicated entry will be removed and modules versions will be checked and made available. Core modules will be ommited because you don't need to install them.
+
+This project has begun because it happens to me, and I don't want to search for modules to install by hand, I just want to run a simple script that update the list in a simple way. It was much more longer to write the module than to search by hand but I wish it will be usefull.
 
 
 INSTALLATION
