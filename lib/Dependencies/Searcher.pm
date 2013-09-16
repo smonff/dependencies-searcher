@@ -16,6 +16,47 @@ use Cwd;
 
 our $VERSION = '0.05_02';
 
+=head1 NAME
+
+Dependencies::Searcher - Search recursively dependencies used in a module's directory 
+and build a report that can be used as a Carton cpanfile.
+
+=cut
+
+=head1 SYNOPSIS
+
+Maybe you don't want to have to list all the dependencies of your Perl application by 
+hand and want an automated way to build it. Maybe you forgot to do it for a long time 
+ago. During this time, you've add lots of CPAN modules. Carton is here to help you 
+manage dependencies between your development environment and production, but how to 
+keep track of the list of modules you will pass to to Carton?
+
+Event if it is a no brainer to keep track of this list, it can be much better not to 
+have to do it.
+
+You will need a tool that will check for any 'requires' or 'use' in your module package,
+and report it into a file that could be used as a Carton cpanfile. Any duplicated entry
+will be removed and modules versions will be checked and made available. Core modules
+will be ommited because you don't need to install them.
+
+This project has begun because it happens to me, and I don't want to search for modules 
+to install by hand, I just want to run a simple script that update the list in a simple 
+way. It was much more longer to write the module than to search by hand but I wish it 
+will be usefull for others.
+
+    use Dependencies::Searcher;
+
+    my $searcher = Dependencies::Searcher->new();
+    my @elements = $searcher->get_files();
+    my $path = $searcher->build_full_path(@elements);
+    my @uses = $searcher->get_modules($path, "use");
+    my @uniq_modules = $searcher->uniq(@uses);
+
+    $searcher->dissociate(@uniq_modules);
+
+    $searcher->generate_report($searcher->non_core_modules);
+
+=cut
 
 # Init parameters
 has 'non_core_modules' => (
@@ -248,55 +289,21 @@ sub generate_report {
     close $cpanfile_fh;
 }
 
-=head1 NAME
-
-Dependencies::Searcher - Search recursively dependencies used in a module's 
-directory and build a report that can be used as a Carton cpanfile.
-
-=cut
-
-=head1 SYNOPSIS
-
-Maybe you don't want to have to list all the dependencies of your application by hand,
-or maybe you forgot to do it for a long time ago. During this time, you've add lots of
-CPAN modules. Carton is here to help you manage dependencies between your development 
-environment and production, but how to keep track of the list of modules you will give
-to Carton?
-
-You will need a tool that will check for any 'requires' or 'use' in your module package, 
-and report it into a file that could be used as a Carton cpanfile. Any duplicated entry 
-will be removed and versions are available.
-
-This project has begun because it happens to me, and I don't want to search for modules
-to install, I just want to run a simple script that update the list in a simple way.
-
-    use Dependencies::Searcher;
-
-    my $searcher = Dependencies::Searcher->new();
-    my @elements = $searcher->get_files();
-    my $path = $searcher->build_full_path(@elements);
-    my @uses = $searcher->get_modules($path, "use");		
-    my @uniq_modules = $searcher->uniq(@uses);
-
-    $searcher->dissociate(@uniq_modules);
-
-    $searcher->generate_report($searcher->non_core_modules);
-
 =head1 SUBROUTINES/METHODS
 
 This is work in progress...
 
-=head2 get_modules
+=head Dependencies::Searcher->get_modules()
 
 Us-e Ack to get modules and store lines into arrays
 
 =cut
 
-=head2 get_files
+=head2 Dependencies::Searcher->get_files()
 
 =cut
 
-=head2 build_full_path
+=head2 Dependencies::Searcher->build_full_path()
 
 Retrieve names of :
  * lib/ directory, if it don't exist, we don't care and die
@@ -306,47 +313,39 @@ Retrieve names of :
 
 =cut
 
-=head2 merge_dependencies 
+=head2 Dependencies::Searcher->merge_dependencies()
 
 Merge use and requires
 
 =cut
 
-=head2 make_it_real
+=head2 Dependencies::Searcher->make_it_real()
 
 Remove special cases that can't be interesting.
 
 =cut
 
-=head2 clean_everything
+=head2 Dependencies::Searcher->clean_everything()
 
 Remove everything but the module name. Remove dirt, clean stuffs...
 
 =cut
 
-=head2 uniq
+=head2 Dependencies::Searcher->uniq()
 
 Make each array element uniq
 
 =cut
 
-=head2 dissociate
+=head2 Dependencies::Searcher->dissociate()
 
 Dissociate core / non-core modules
 
 =cut
 
-=head2 generate_report
+=head2 Dependencies::Searcher->generate_report()
 
 Generate the cpanfile for Carton, with optionnal version number
-
-=cut
-
-=head2
-
-=cut
-
-=head2
 
 =cut
 
