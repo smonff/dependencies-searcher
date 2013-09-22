@@ -1,5 +1,9 @@
 Revision history for Dependencies-Searcher
 
+0.05_05
+ [EHANCEMENTS]
+ - Removes version numbers
+
 0.05_04 2013-09-22 20:02
  [EHANCEMENTS]
  - Upgrade documentation

@@ -4,7 +4,7 @@ use 5.010;
 use Data::Printer;
 use feature qw(say);
 # Since 2.99 it got a is_core() method :)
-use Module::CoreList;
+use Module::CoreList 2.99;
 use Module::Version 'get_version';
 use autodie;
 use Moose;
@@ -248,6 +248,10 @@ sub clean_everything {
 	# Remove some warning sugar
 	$module =~ s/([a-z]+)\sFATAL\s=>\s'all'/$1/i;
 
+	# Remove version numbers
+	# http://stackoverflow.com/questions/82064/a-regex-for-version-number-parsing
+	$module =~ s/\s(\*|\d+(\.\d+){0,2}(\.\*)?)$//;
+
 	push @clean_modules, $module;
     }
     return @clean_modules;
@@ -266,6 +270,11 @@ sub uniq {
 }
 
 
+#
+# BUG !!! https://github.com/smonff/dependencies-searcher/issues/25
+#
+# Recent versions of corelist modules are not in corelist but this code portion acts just like it would
+#
 sub dissociate {
     my ($self, @common_modules) = @_;
 
@@ -273,6 +282,8 @@ sub dissociate {
 
 	# my $core_list_answer = `corelist $nc_module`;
 	my $core_list_answer = Module::CoreList::is_core($nc_module);
+
+	debugf("$nc_module version : " .  $Module::CoreList::version{ $] }{"$nc_module"});
 
 	# print "Found " . $nc_module;
 	if (
@@ -308,9 +319,6 @@ sub generate_report {
 
     foreach my $module_name ( @{$self->non_core_modules} ) {
 
-	# From Module::Version command line utility
-	# BUG : should use IPC::Cmd instead of backquotes
-	# or even better use the module's perl API but not the command line :(
 	my $version = get_version($module_name);
 	debugf($module_name);
 	debugf $version;
@@ -408,6 +416,12 @@ Dissociate core / non-core modules
 =head2 Dependencies::Searcher->generate_report()
 
 Generate the cpanfile for Carton, with optionnal version number
+
+=cut
+
+=head2 Log::Minimal::PRINT override
+
+Just override the way Log::Minimal is used. We create a .out file in ./t directory. To see log, use tail -v /path/to/the/module/t/dependencies-searcher.[y-M-d].out
 
 =cut
 
