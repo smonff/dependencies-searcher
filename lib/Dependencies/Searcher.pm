@@ -18,7 +18,7 @@ use IO::File;
 # This module will be used throught a system call
 # App::Ack;
 
-our $VERSION = '0.05_03';
+our $VERSION = '0.05_04';
 
 =head1 NAME
 
