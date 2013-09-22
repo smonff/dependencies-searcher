@@ -66,7 +66,7 @@ Dependencies::Searcher::AckRequester - Helps DependenciesSearcher to use Ack
 
 =head1 SYNOPSIS
 
-    # A nice code example
+A nice code example
 
 =head1 SUBROUTINES/METHODS
 

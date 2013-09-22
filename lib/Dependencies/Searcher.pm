@@ -3,18 +3,22 @@ package Dependencies::Searcher;
 use 5.010;
 use Data::Printer;
 use feature qw(say);
-use Module::CoreList qw();
+# Since 2.99 it got a is_core() method :)
+use Module::CoreList;
+use Module::Version 'get_version';
 use autodie;
 use Moose;
 use IPC::Cmd qw[can_run run];
 use Dependencies::Searcher::AckRequester;
 use Cwd;
+use Log::Minimal env_debug => 'LM_DEBUG';
+use File::Stamped;
+use IO::File;
 
-# These modules will be used throught a system call
-# Module::Version;
+# This module will be used throught a system call
 # App::Ack;
 
-our $VERSION = '0.05_02';
+our $VERSION = '0.05_03';
 
 =head1 NAME
 
@@ -38,6 +42,12 @@ can be used as a Carton cpanfile.
     $searcher->dissociate(@uniq_modules);
 
     $searcher->generate_report($searcher->non_core_modules);
+
+    # Prints
+    # requires Data::Printer, 0.35
+    # requires Moose, 2.0602
+    # requires IPC::Cmd
+    # requires Module::Version
 
 =cut
 
@@ -87,14 +97,37 @@ has 'core_modules' => (
     },
 );
 
-#
-# BUGGED : TRY TO USE IPC::Cmd, changed API !!!
-#
+
+#  * * * * * * * * * * * * * * *
+
+#      L O G     S T U F F     *
+
+#  * * * * * * * * * * * * * * *
+
+$ENV{LM_DEBUG} = 1;
+my $current_dir = getcwd();
+my $log_fh = File::Stamped->new(
+    pattern => "$current_dir/t/dependencies-searcher.%Y-%m-%d.out",
+);
+
+# Overrides Log::Minimal PRINT
+$Log::Minimal::PRINT = sub {
+    my ( $time, $type, $message, $trace) = @_;
+    print {$log_fh} "$time [$type] $message\n";
+};
+
+debugf("Dependencies::Searcher 0.05_03 debugger init.");
+
+#  * * * * * * * * * * * * * * *
+
+
 sub get_modules {
     my ($self, $pattern, @path) = @_;
 
-    #p @path;
+    # @path;
     #p $pattern;
+
+    debugf("Coucou");
 
     my $ack_requester = Dependencies::Searcher::AckRequester->new();
 
@@ -238,12 +271,15 @@ sub dissociate {
 
     foreach my $nc_module (@common_modules) {
 
-	my $core_list_answer = `corelist $nc_module`;
+	# my $core_list_answer = `corelist $nc_module`;
+	my $core_list_answer = Module::CoreList::is_core($nc_module);
+
 	# print "Found " . $nc_module;
 	if (
 	    (exists $Module::CoreList::version{ $] }{"$nc_module"})
 	    or
-	    ($core_list_answer =~ m/released/)
+	    # In case module don't have a version number
+	    ($core_list_answer == 1)
 	) {
 	    # Add to core_module
 
@@ -273,13 +309,21 @@ sub generate_report {
     foreach my $module_name ( @{$self->non_core_modules} ) {
 
 	# From Module::Version command line utility
-	my $version = `mversion $module_name`;
+	# BUG : should use IPC::Cmd instead of backquotes
+	# or even better use the module's perl API but not the command line :(
+	my $version = get_version($module_name);
+	debugf($module_name);
+	debugf $version;
 
-	# Add the "requires $module_name\n" to the next line of the file
-	chomp($module_name, $version);
+	# if not undef
+	if ($version) {
+	    # Add the "requires $module_name\n" to the next line of the file
+	    chomp($module_name, $version);
 
-	if ($version =~ m/[0-9]\.[0-9]+/ ) {
-	    say $cpanfile_fh "requires " . $module_name . ", " . $version;
+	    if ($version =~ m/[0-9]\.[0-9]+/ ) {
+		say $cpanfile_fh "requires " . $module_name . ", " . $version;
+	    } # else : other case ?
+
 	} else {
 	    say $cpanfile_fh "requires " . $module_name;
 	}
@@ -287,6 +331,15 @@ sub generate_report {
     }
     close $cpanfile_fh;
 }
+
+debugf("-------------  END  -------------");
+
+#sub logm {
+    #my $data = shift;
+
+    #open my $log_file, '>>', './t/logs.out';
+    #say $log_file }
+
 
 =head1 SUBROUTINES/METHODS
 
@@ -300,15 +353,25 @@ Us-e Ack to get modules and store lines into arrays
 
 =head2 Dependencies::Searcher->get_files()
 
+TODO
+
 =cut
 
 =head2 Dependencies::Searcher->build_full_path()
 
 Retrieve names of :
- * lib/ directory, if it don't exist, we don't care and die
- * Makefile.PL
- * script/ directory, if we use a Catalyst application
- * ... only if they exists !
+
+=over 2
+
+=item * lib/ directory, if it don't exist, we don't care and die
+
+=item * Makefile.PL
+
+=item * script/ directory, if we use a Catalyst application
+
+=item * ... only if they exists !
+
+=back
 
 =cut
 
@@ -361,6 +424,18 @@ the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Dependenci
 
 https://github.com/smonff/dependencies-searcher/issues
 
+=over 2
+
+=item * Ajouter du log dans un fichier temporaire et tailer dessus pour avoir le debug pendant les tests avec https://metacpan.org/module/Log::Minimal et http://stackoverflow.com/questions/9922899/perl-system-command-redirection-to-log-files, 
+
+=item * Implémenter Module::Corelist 2.99 pour bénéficier de is_corelist() 
+
+=item * Utiliser l'interface Perl de Module::Version
+
+=item * Bug "outdated" coremodule : si on a besoin d'un module "corelist" plus récent que celui qui est inclu dans la version de Perl installée sur le system
+
+=back
+
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
@@ -370,7 +445,7 @@ You can find documentation for this module with the perldoc command.
 
 You can also look for information at:
 
-=over 4
+=over 2
 
 =item * RT: CPAN's request tracker (report bugs here)
 
@@ -417,9 +492,15 @@ job.
 
 See L<http://beyondgrep.com/>
 
-See also
-   https://metacpan.org/module/Perl::PrereqScanner
-   http://stackoverflow.com/questions/17771725/
+See also :
+
+=over 2
+
+=item * https://metacpan.org/module/Perl::PrereqScanner
+
+=item * http://stackoverflow.com/questions/17771725/
+
+=back
 
 =back
 

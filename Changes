@@ -1,6 +1,18 @@
 Revision history for Dependencies-Searcher
 
-0.05_02 2013-09-16
+0.05_04 
+ [EHANCEMENTS]
+ - Upgrade documentation
+ - Logs system with File::Stamped & Log::Minimal
+ - Use Module::Version's Perl API, not command line (avoid problems reported by Smoke testers)
+ - Now implement the Module::CoreList 2.99 instead of 2.4902  to use it's is_core() method (avoids to use another IPC::Cmd)  
+
+0.05_03 2013-09-17 07:51
+ [FIXES]
+ - A pod error
+ - Add App::Ack and Module::Version to TEST_REQUIRES in Makefile.PL
+
+0.05_02 2013-09-16 22:11
  [FIXES]
  - get_modules() method rewriting, using IPC::Cmd, not exec() or system()
  - Fix crash when not finding any use or require
