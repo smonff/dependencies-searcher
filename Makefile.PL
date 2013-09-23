@@ -26,7 +26,7 @@ WriteMakefile(
 	'Data::Printer'   => 0,
 	'File::Stamped'   => 0,
 	'Log::Minimal'    => 0,
-	'Modle::CoreList' => 2.99,
+	'Module::CoreList' => 2.99,
 	'Module::Version' => 0,
 	'Moose'           => 0,
 	'Test::More'      => 0,

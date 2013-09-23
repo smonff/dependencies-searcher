@@ -1,8 +1,14 @@
 Revision history for Dependencies-Searcher
+0.05_06
+ [FIX]
+ - Translate some french doc
 
-0.05_05
+0.05_05 2013-09-23 20:45
  [EHANCEMENTS]
+ - Log to a /tmp file
  - Removes version numbers
+ [FIX]
+ - Stupid typo in Makefile.PL prerequisites
 
 0.05_04 2013-09-22 20:02
  [EHANCEMENTS]

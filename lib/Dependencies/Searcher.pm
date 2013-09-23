@@ -14,11 +14,12 @@ use Cwd;
 use Log::Minimal env_debug => 'LM_DEBUG';
 use File::Stamped;
 use IO::File;
+use File::Temp;
 
 # This module will be used throught a system call
 # App::Ack;
 
-our $VERSION = '0.05_04';
+our $VERSION = '0.05_05';
 
 =head1 NAME
 
@@ -105,9 +106,10 @@ has 'core_modules' => (
 #  * * * * * * * * * * * * * * *
 
 $ENV{LM_DEBUG} = 1;
-my $current_dir = getcwd();
+my $tmp = '/tmp';
+
 my $log_fh = File::Stamped->new(
-    pattern => "$current_dir/t/dependencies-searcher.%Y-%m-%d.out",
+    pattern => $tmp . "/dependencies-searcher.%Y-%m-%d.out",
 );
 
 # Overrides Log::Minimal PRINT
@@ -117,6 +119,7 @@ $Log::Minimal::PRINT = sub {
 };
 
 debugf("Dependencies::Searcher 0.05_03 debugger init.");
+debugf("Log file available in /tmp");
 
 #  * * * * * * * * * * * * * * *
 
@@ -283,7 +286,7 @@ sub dissociate {
 	# my $core_list_answer = `corelist $nc_module`;
 	my $core_list_answer = Module::CoreList::is_core($nc_module);
 
-	debugf("$nc_module version : " .  $Module::CoreList::version{ $] }{"$nc_module"});
+	# debugf("$nc_module version : " .  $Module::CoreList::version{ $] }{"$nc_module"});
 
 	# print "Found " . $nc_module;
 	if (
@@ -442,11 +445,11 @@ https://github.com/smonff/dependencies-searcher/issues
 
 =item * Ajouter du log dans un fichier temporaire et tailer dessus pour avoir le debug pendant les tests avec https://metacpan.org/module/Log::Minimal et http://stackoverflow.com/questions/9922899/perl-system-command-redirection-to-log-files, 
 
-=item * Implémenter Module::Corelist 2.99 pour bénéficier de is_corelist() 
+=item * Implementer Module::Corelist 2.99 pour beneficier de is_corelist() 
 
 =item * Utiliser l'interface Perl de Module::Version
 
-=item * Bug "outdated" coremodule : si on a besoin d'un module "corelist" plus récent que celui qui est inclu dans la version de Perl installée sur le system
+=item * Bug "outdated" coremodule : si on a besoin d'un module "corelist" plus recent que celui qui est inclu dans la version de Perl installee sur le system
 
 =back
 
