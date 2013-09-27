@@ -24,6 +24,7 @@ WriteMakefile(
     PREREQ_PM => {
 	'App::Ack'        => 0,
 	'Data::Printer'   => 0,
+	'File::HomeDir'   => 0,
 	'File::Stamped'   => 0,
 	'Log::Minimal'    => 0,
 	'Module::CoreList' => 2.99,

@@ -1,7 +1,12 @@
 Revision history for Dependencies-Searcher
-0.05_06
+
+0.05_07 
+ [EHANCEMENT]
+ - Make log file directory cross-platform (thanx mishin)
+
+0.05_06 2013-09-24 08:57
  [FIX]
- - Translate some french doc
+ - Translate some french doc and remove some non UTF-8 stuff
 
 0.05_05 2013-09-23 20:45
  [EHANCEMENTS]

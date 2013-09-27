@@ -15,11 +15,13 @@ use Log::Minimal env_debug => 'LM_DEBUG';
 use File::Stamped;
 use IO::File;
 use File::Temp;
+use File::HomeDir;
+use File::Spec::Functions qw(catdir catfile);
 
 # This module will be used throught a system call
 # App::Ack;
 
-our $VERSION = '0.05_05';
+our $VERSION = '0.05_07';
 
 =head1 NAME
 
@@ -99,17 +101,12 @@ has 'core_modules' => (
 );
 
 
-#  * * * * * * * * * * * * * * *
-
-#      L O G     S T U F F     *
-
-#  * * * * * * * * * * * * * * *
-
+# Log stuff here
 $ENV{LM_DEBUG} = 1;
-my $tmp = '/tmp';
-
+my $work_path = File::HomeDir->my_data;
+p $work_path;
 my $log_fh = File::Stamped->new(
-    pattern => $tmp . "/dependencies-searcher.%Y-%m-%d.out",
+    pattern => catdir($work_path,  "dependencies-searcher.log.%Y-%m-%d.out"),
 );
 
 # Overrides Log::Minimal PRINT
@@ -120,17 +117,12 @@ $Log::Minimal::PRINT = sub {
 
 debugf("Dependencies::Searcher 0.05_03 debugger init.");
 debugf("Log file available in /tmp");
-
-#  * * * * * * * * * * * * * * *
-
+# End of log init
 
 sub get_modules {
     my ($self, $pattern, @path) = @_;
 
-    # @path;
-    #p $pattern;
-
-    debugf("Coucou");
+    debugf($pattern);
 
     my $ack_requester = Dependencies::Searcher::AckRequester->new();
 
@@ -443,13 +435,13 @@ https://github.com/smonff/dependencies-searcher/issues
 
 =over 2
 
-=item * Ajouter du log dans un fichier temporaire et tailer dessus pour avoir le debug pendant les tests avec https://metacpan.org/module/Log::Minimal et http://stackoverflow.com/questions/9922899/perl-system-command-redirection-to-log-files, 
+=item * Add log into a tmp file and use tail over it to get debug traces during tests and development. Using L<https://metacpan.org/module/Log::Minimal> et L<http://stackoverflow.com/questions/9922899/perl-system-command-redirection-to-log-files>, 
 
-=item * Implementer Module::Corelist 2.99 pour beneficier de is_corelist() 
+=item * Implement Module::Corelist 2.99 to get is_corelist() method 
 
-=item * Utiliser l'interface Perl de Module::Version
+=item * Use Module::Version's Perl interface
 
-=item * Bug "outdated" coremodule : si on a besoin d'un module "corelist" plus recent que celui qui est inclu dans la version de Perl installee sur le system
+=item * Bug "outdated" coremodule : if we need a "corelist" module that is a younger release than the one packed in the vanilla system Perl, this is bad...
 
 =back
 
@@ -482,6 +474,15 @@ L<http://search.cpan.org/dist/Dependencies-Searcher/>
 
 =back
 
+=head1 Contributors
+
+=over
+
+=item * Nikolay Mishin (mishin) makes it more cross-platform
+
+=back
+
+=cut
 
 =head1 ACKNOWLEDGEMENTS
 
