@@ -7,25 +7,46 @@ use Module::CoreList qw();
 use autodie;
 use Moose;
 use IPC::Cmd qw[can_run run];
+use IPC::Run;
+use Log::Minimal env_debug => 'LM_DEBUG';
+use File::Stamped;
+use File::HomeDir;
+use File::Spec::Functions qw(catdir catfile);
+
 
 # These modules will be used throught a system call
-# Module::Version;
 # App::Ack;
 
-our $VERSION = '0.05_02';
 has 'full_path' => (
   is  => 'rw',
   isa => 'Str',
 );
 
+$IPC::Cmd::USE_IPC_RUN = 1;
+
+my $work_path = File::HomeDir->my_data;
+my $log_fh = File::Stamped->new(
+    pattern => catdir($work_path,  "dependencies-searcher.log.%Y-%m-%d.out"),
+);
+
+# Overrides Log::Minimal PRINT
+$Log::Minimal::PRINT = sub {
+    my ( $time, $type, $message, $trace) = @_;
+    print {$log_fh} "$time [$type] $message\n";
+};
+
 sub get_path {
     my $self = shift;
 
-    my $tmp_full_path = can_run('ack') or warn 'Ack is not installed!';
-    $self->full_path($tmp_full_path);
+    my $tmp_full_path = can_run('ack');
 
-  return $self->full_path;
-
+    if ($tmp_full_path) {
+	$self->full_path($tmp_full_path);
+	debugf("Ack full path : " . $self->full_path);
+	return $self->full_path;
+    } else {
+	critf('Something goes wrong with Ack path or IPC::Run is not available !');
+    }
 }
 
 sub build_cmd {
@@ -48,6 +69,8 @@ sub ack {
     my($success, $error_message, $full_buffer, $stdout_buffer, $stderr_buffer) = run( command => $cmd, verbose => 0 );
 
     my @modules;
+
+    debugf(join "", @$full_buffer);
 
     if ($success) {
 	push @modules, split(/\n/m, $$full_buffer[0]);

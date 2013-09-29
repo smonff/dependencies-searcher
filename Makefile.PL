@@ -26,6 +26,8 @@ WriteMakefile(
 	'Data::Printer'   => 0,
 	'File::HomeDir'   => 0,
 	'File::Stamped'   => 0,
+	'IPC::Cmd'        => 0,
+	'IPC::Run'        => 0,
 	'Log::Minimal'    => 0,
 	'Module::CoreList' => 2.99,
 	'Module::Version' => 0,

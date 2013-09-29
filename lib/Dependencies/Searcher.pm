@@ -104,7 +104,6 @@ has 'core_modules' => (
 # Log stuff here
 $ENV{LM_DEBUG} = 1;
 my $work_path = File::HomeDir->my_data;
-p $work_path;
 my $log_fh = File::Stamped->new(
     pattern => catdir($work_path,  "dependencies-searcher.log.%Y-%m-%d.out"),
 );
@@ -116,29 +115,35 @@ $Log::Minimal::PRINT = sub {
 };
 
 debugf("Dependencies::Searcher 0.05_03 debugger init.");
-debugf("Log file available in /tmp");
+debugf("Log file available in " . $work_path);
 # End of log init
 
 sub get_modules {
     my ($self, $pattern, @path) = @_;
 
-    debugf($pattern);
+    debugf("Ack pattern : " . $pattern);
 
     my $ack_requester = Dependencies::Searcher::AckRequester->new();
 
-    my @moduls;
-
     my @params = ('--perl', '-hi', $pattern, @path);
+    foreach my $param (@params) {
+	debugf("Param : " . $param);
+    }
 
     my $requester = Dependencies::Searcher::AckRequester->new();
     my $ack_path = $requester->get_path();
+    debugf("Ack path : " . $ack_path);
     my $cmd_use = $requester->build_cmd(@params);
-    @moduls = $requester->ack($cmd_use);
+
+    my @moduls = $requester->ack($cmd_use);
+    infof("Found $pattern modules : " . @moduls);
+    p @moduls;
 
     if ( defined $moduls[0]) {
 	if ($moduls[0] =~ m/^use/ or $moduls[0] =~ m/^require/) {
 	    return @moduls;
 	} else {
+	    critf("Failed to retrieve modules with Ack");
 	    die "Failed to retrieve modules with Ack";
 	}
     } else {
@@ -190,13 +195,16 @@ sub build_full_path {
     return $path;
 }
 
+# Generate a "1" when merging if one of both is empty
+# Will be clean in make_it_real method
 sub merge_dependencies {
     my ($self, @uses, @requires) = @_;
     my @merged_dependencies = (@uses, @requires);
+    infof("Merged use and require dependencies");
     return @merged_dependencies;
 }
 
-# Remove special cases
+# Remove special cases that aren't need at all
 sub make_it_real {
     my ($self, @merged) = @_;
     my @real_modules;
@@ -204,21 +212,22 @@ sub make_it_real {
 	push(@real_modules, $module) unless
 
 	$module =~ m/say/
-	# Contains qw()
-	or $module =~ m/qw\(\)/
+
 	# Describes a minimal Perl version
 	or $module =~ m/^use\s[0-9]\.[0-9]+?/
 	or $module =~ m/^use\sautodie?/
-	or $module =~ m/^use\sautodie?/;
+	or $module =~ m/^1$/;
     }
     return @real_modules;
 }
 
-
+# Clean correct lines that can't be removed
 sub clean_everything {
     my @clean_modules = ();
     my ($self, @dirty_modules) = @_;
     foreach my $module ( @dirty_modules ) {
+
+	debugf("Dirty module : " . $module);
 
 	# remove the 'use' and the space next
 	$module =~ s/use\s//i;
@@ -226,13 +235,14 @@ sub clean_everything {
 	# remove the 'require', quotes and the space next
 	# but returns the captured module name (non-greedy)
 	$module =~ s/requires\s'(.*?)'/$1/i;
-	                                  # i = not case-sensitive
+	                            debugf("Dirty module : " . $module);      # i = not case-sensitive
 	# Remove the ';' at the end of the line
 	$module =~ s/;//i;
 
-	# Remove any qw(xxxx)
-	# BUG, should remove spaces
-	$module =~ s/\sqw\([A-Za-z]+\)//i;
+	# Remove any qw(xxxxx xxxxx)
+	# '\(' are for real 'qw()' parenthesis not for grouping
+	# Also removes empty qw()
+	$module =~ s/\sqw\(([A-Za-z]+(\s*[A-Za-z]*))*\)//i;
 
 	# Remove dirty bases and quotes.
 	# This regex that substitute My::Module::Name
@@ -247,6 +257,7 @@ sub clean_everything {
 	# http://stackoverflow.com/questions/82064/a-regex-for-version-number-parsing
 	$module =~ s/\s(\*|\d+(\.\d+){0,2}(\.\*)?)$//;
 
+	debugf("Clean module : " . $module);
 	push @clean_modules, $module;
     }
     return @clean_modules;
@@ -334,14 +345,6 @@ sub generate_report {
     }
     close $cpanfile_fh;
 }
-
-debugf("-------------  END  -------------");
-
-#sub logm {
-    #my $data = shift;
-
-    #open my $log_file, '>>', './t/logs.out';
-    #say $log_file }
 
 
 =head1 SUBROUTINES/METHODS

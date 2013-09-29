@@ -1,7 +1,14 @@
 Revision history for Dependencies-Searcher
 
 0.05_07 
- [EHANCEMENT]
+ [FIX]
+ - New regex for cleaning
+ - Module '1' were appearing when merging 2 use and require arrays
+ - Force the use of IPC::Run and add it (and IPC::Cmd) to Makefile.PL requirements
+ [EHANCEMENTS]
+ - TODO More detailed tests
+ - TODO Log module not duplicated code everywhere
+ - Better logs 
  - Make log file directory cross-platform (thanx mishin)
 
 0.05_06 2013-09-24 08:57
