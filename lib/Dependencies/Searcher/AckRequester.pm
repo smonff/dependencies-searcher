@@ -70,7 +70,7 @@ sub ack {
 
     my @modules;
 
-    debugf(join "", @$full_buffer);
+    debugf("All modules in distribution : " . join "", @$full_buffer);
 
     if ($success) {
 	push @modules, split(/\n/m, $$full_buffer[0]);
