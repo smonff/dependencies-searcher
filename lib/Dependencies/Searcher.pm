@@ -113,7 +113,7 @@ has 'core_modules' => (
 
 
 # Log stuff here
-$ENV{LM_DEBUG} = 0; # 1 for debug logs, 0 for info
+$ENV{LM_DEBUG} = 1; # 1 for debug logs, 0 for info
 my $work_path = File::HomeDir->my_data;
 my $log_fh = File::Stamped->new(
     pattern => catdir($work_path,  "dependencies-searcher.log.%Y-%m-%d.out"),
@@ -322,6 +322,10 @@ sub dissociate {
 
 	    debugf("Mversion version : " . $mversion_version);
 	    debugf("Corelist version : " . $corelist_version);
+
+	    # Version::Compare warns about versions numbers with '_' are 'non-numeric values'
+	    $corelist_version =~ s/_/./;
+	    $mversion_version =~ s/_/./;
 
 	    # It's a fix for this bug https://github.com/smonff/dependencies-searcher/issues/25
 	    # Recent versions of corelist modules are not include in all Perl versions corelist
