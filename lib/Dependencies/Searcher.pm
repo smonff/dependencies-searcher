@@ -78,6 +78,16 @@ will be usefull for others.
 
 =cut
 
+=head1 WHY ISN'T IT JUST ANOTHER MODULE::SCANDEPS ?
+
+Module::ScanDeps is a bi-dimentional recursive scanner: it features dependencies and directories 
+recursivity.
+
+Dependencies::Searcher only found direct dependencies, not dependencies of dependencies,
+it scans recursively directories but not dependencies..
+
+=cut
+
 # Init parameters
 has 'non_core_modules' => (
     traits     => ['Array'],
