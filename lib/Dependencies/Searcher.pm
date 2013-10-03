@@ -388,6 +388,11 @@ sub generate_report {
     close $cpanfile_fh;
 }
 
+1;
+
+__END__
+
+=pod
 
 =head1 SUBROUTINES/METHODS
 
@@ -580,4 +585,4 @@ See L<http://dev.perl.org/licenses/> for more information.
 
 =cut
 
-1; # End of Dependencies::Searcher
+

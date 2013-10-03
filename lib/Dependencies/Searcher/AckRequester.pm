@@ -81,6 +81,12 @@ sub ack {
     return @modules;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Dependencies::Searcher::AckRequester - Helps DependenciesSearcher to use Ack
@@ -149,4 +155,4 @@ See L<http://dev.perl.org/licenses/> for more information.
 
 =cut
 
-1;
+
