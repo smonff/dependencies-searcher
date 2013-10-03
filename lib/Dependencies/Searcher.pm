@@ -113,7 +113,7 @@ has 'core_modules' => (
 
 
 # Log stuff here
-$ENV{LM_DEBUG} = 1; # 1 for debug logs, 0 for info
+$ENV{LM_DEBUG} = 0; # 1 for debug logs, 0 for info
 my $work_path = File::HomeDir->my_data;
 my $log_fh = File::Stamped->new(
     pattern => catdir($work_path,  "dependencies-searcher.log.%Y-%m-%d.out"),
