@@ -33,7 +33,7 @@ Dependencies::Searcher - Manage your dependencies list in a convenient way
 =head1 SYNOPSIS
 
 Search recursively dependencies used in a module's directory and build a report that 
-can be used as a Carton cpanfile.
+can be used as a L<Carton> cpanfile.
 
     use Dependencies::Searcher;
 
@@ -59,15 +59,15 @@ can be used as a Carton cpanfile.
 
 Maybe you don't want to have to list all the dependencies of your Perl application by
 hand and want an automated way to build it. Maybe you forgot to do it for a long time
-ago. During this time, you've add lots of CPAN modules. Carton is here to help you
+ago. During this time, you've add lots of CPAN modules. L<Carton> is here to help you
 manage dependencies between your development environment and production, but how to
-keep track of the list of modules you will pass to to Carton?
+keep track of the list of modules you will pass to L<Carton>?
 
 Event if it is a no brainer to keep track of this list, it can be much better not to
 have to do it.
 
 You will need a tool that will check for any 'requires' or 'use' in your module package,
-and report it into a file that could be used as a Carton cpanfile. Any duplicated entry
+and report it into a file that could be used as a L<Carton> cpanfile. Any duplicated entry
 will be removed and modules versions will be checked and made available. Core modules
 will be ommited because you don't need to install them.
 
@@ -460,7 +460,7 @@ Dissociate core / non-core modules
 
 =head2 Dependencies::Searcher->generate_report()
 
-Generate the cpanfile for Carton, with optionnal version number
+Generate the cpanfile for L<Carton>, with optionnal version number
 
 =cut
 
