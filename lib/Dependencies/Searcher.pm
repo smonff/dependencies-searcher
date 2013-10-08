@@ -541,7 +541,7 @@ L<http://search.cpan.org/dist/Dependencies-Searcher/>
 =item * Brian D. Foy's Module::Extract::Use
 
 Was the main inspiration for this one. First, I want to use it for my needs
-but is was not recursive...
+but it was not recursive...
 
 See L<https://metacpan.org/module/Module::Extract::Use>
 
