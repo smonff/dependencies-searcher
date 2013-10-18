@@ -1,11 +1,11 @@
 Revision history for Dependencies-Searcher
 
-0.05_08
+0.05_08 2013
  [EHANCEMENTS]
  - TODO More detailed tests
- - test
+ - Complete and correct documentation
 
-0.05_07 
+0.05_07 2013-10-04 21:23
  [FIX]
  - Close bug #25 about modules in corelist with a fresher version 
  - New regex for cleaning, now everything is clean

@@ -32,8 +32,8 @@ Dependencies::Searcher - Manage your dependencies list in a convenient way
 
 =head1 SYNOPSIS
 
-Search recursively dependencies used in a module's directory and build a report that 
-can be used as a L<Carton> cpanfile.
+Search recursively dependencies used in a module's directory and build a report
+that can be used as a L<Carton> cpanfile.
 
     use Dependencies::Searcher;
 
@@ -57,34 +57,38 @@ can be used as a L<Carton> cpanfile.
 
 =head1 DESCRIPTION
 
-Maybe you don't want to have to list all the dependencies of your Perl application by
-hand and want an automated way to build it. Maybe you forgot to do it for a long time
-ago. During this time, you've add lots of CPAN modules. L<Carton> is here to help you
-manage dependencies between your development environment and production, but how to
-keep track of the list of modules you will pass to L<Carton>?
+Maybe you don't want to have to list all the dependencies of your Perl
+application by hand and want an automated way to build it. Maybe you
+forgot to do it for a long time ago. During this time, you've add lots
+of CPAN modules.  L<Carton> is here to help you manage dependencies
+between your development environment and production, but how to keep
+track of the list of modules you will pass to L<Carton>?
 
-Event if it is a no brainer to keep track of this list, it can be much better not to
-have to do it.
+Event if it is a no brainer to keep track of this list, it can be much
+better not to have to do it.
 
-You will need a tool that will check for any 'requires' or 'use' in your module package,
-and report it into a file that could be used as a L<Carton> cpanfile. Any duplicated entry
-will be removed and modules versions will be checked and made available. Core modules
-will be ommited because you don't need to install them.
+You will need a tool that will check for any 'requires' or 'use' in
+your module package, and report it into a file that could be used as a
+L<Carton> cpanfile. Any duplicated entry will be removed and modules
+versions will be checked and made available. Core modules will be
+ommited because you don't need to install them.
 
-This project has begun because it happens to me, and I don't want to search for modules
-to install by hand, I just want to run a simple script that update the list in a simple
-way. It was much more longer to write the module than to search by hand but I wish it
-will be usefull for others.
+This  project has begun because it happens to me, and I don't want to
+search for modules to install by hand, I just want to run a simple
+script that update the list in a simple way. It was much more longer
+to write the module than to search by hand but I wish it will be
+usefull for others.
 
 =cut
 
 =head1 WHY ISN'T IT JUST ANOTHER MODULE::SCANDEPS ?
 
-Module::ScanDeps is a bi-dimentional recursive scanner: it features dependencies and directories 
-recursivity.
+Module::ScanDeps is a bi-dimentional recursive scanner: it features
+dependencies and directories recursivity.
 
-Dependencies::Searcher only found direct dependencies, not dependencies of dependencies,
-it scans recursively directories but not dependencies..
+Dependencies::Searcher only found direct dependencies, not
+dependencies of dependencies, it scans recursively directories but not
+dependencies..
 
 =cut
 
@@ -174,7 +178,7 @@ sub get_files {
 
 	$structure[0] = $prefix."/lib";
     } else {
-	# 
+
 	# TEST IF THE PATH IS OK ???
 	#
 	#
@@ -246,8 +250,9 @@ sub clean_everything {
 
 	# remove the 'require', quotes and the space next
 	# but returns the captured module name (non-greedy)
+	# i = not case-sensitive
 	$module =~ s/requires\s'(.*?)'/$1/i;
-	                                    # i = not case-sensitive
+
 	# Remove the ';' at the end of the line
 	$module =~ s/;//i;
 
@@ -257,7 +262,8 @@ sub clean_everything {
 	$module =~ s/\sqw\(([A-Za-z]+(\s*[A-Za-z]*))*\)//i;
 	$module =~ s/\sqw\[([A-Za-z]+(_[A-Za-z]+)*(\s*[A-Za-z]*))*\]//i;
 
-	# Remove method names between quotes (those that can be used without class instantiation)
+	# Remove method names between quotes (those that can be used
+	# without class instantiation)
 	$module =~ s/\s'[A-Za-z]+(_[A-Za-z]+)*'//i;
 
 	# Remove dirty bases and quotes.
@@ -270,11 +276,12 @@ sub clean_everything {
 	$module =~ s/([a-z]+)\sFATAL\s=>\s'all'/$1/i;
 
 	# Remove version numbers
-	# http://stackoverflow.com/questions/82064/a-regex-for-version-number-parsing
+	# See "a-regex-for-version-number-parsing" :
+	# http://stackoverflow.com/questions/82064/
 	$module =~ s/\s(\*|\d+(\.\d+){0,2}(\.\*)?)$//;
 
-	# Remove configuration stuff like env_debug => 'LM_DEBUG' but the quoted words
-	# have been removed before 
+	# Remove configuration stuff like env_debug => 'LM_DEBUG' but
+	# the quoted words have been removed before
 	$module =~ s/\s([A-Za-z]+(_[A-Za-z]+)*(\s*[A-Za-z]*))*\s=>//i;
 
 	debugf("Clean module : " . $module);
@@ -314,28 +321,42 @@ sub dissociate {
 	    ($core_list_answer == 1)
 	) {
 
-	    # A module can be in core but the wanted version can be more fresh than the core one...
+	    # A module can be in core but the wanted version can be
+	    # more fresh than the core one...
 	    # Return the most recent version
 	    my $mversion_version = get_version($nc_module);
 	    # Return the corelist version
-	    my $corelist_version = $Module::CoreList::version{ $] }{"$nc_module"};
+	    my $corelist_version = $Module::CoreList::version{
+		$]
+	    }{"$nc_module"};
 
 	    debugf("Mversion version : " . $mversion_version);
 	    debugf("Corelist version : " . $corelist_version);
 
-	    # Version::Compare warns about versions numbers with '_' are 'non-numeric values'
+	    # Version::Compare warns about versions numbers with '_'
+	    # are 'non-numeric values'
 	    $corelist_version =~ s/_/./;
 	    $mversion_version =~ s/_/./;
 
-	    # It's a fix for this bug https://github.com/smonff/dependencies-searcher/issues/25
-	    # Recent versions of corelist modules are not include in all Perl versions corelist
-	    if (&Version::Compare::version_compare($mversion_version, $corelist_version) == 1) {
+	    # It's a fix for this bug
+	    # https://github.com/smonff/dependencies-searcher/issues/25
+	    # Recent versions of corelist modules are not include in
+	    # all Perl versions corelist
+	    if (&Version::Compare::version_compare(
+		$mversion_version, $corelist_version
+	    ) == 1) {
 		infof(
-		    $nc_module . " version " . $mversion_version . " is in use but  " .
-		    $corelist_version . " is in core list"
+		    $nc_module . " version " . $mversion_version .
+		    " is in use but  " .
+		    $corelist_version .
+		    " is in core list"
 		);
 		$self->add_non_core_module($nc_module);
-		infof($nc_module . " is in core but has been added to non core because it's a fresh core");
+		infof(
+		    $nc_module .
+		    " is in core but has been added to non core " .
+		    "because it's a fresh core"
+		);
 		next;
 	    }
 
@@ -347,7 +368,7 @@ sub dissociate {
 	    # push @{ $self->core_modules }, $nc_module;
 
 	    # The "Moose" trait way
-	    # https://metacpan.org/module/Moose::Meta::Attribute::Native::Trait::Array
+	    # metacpan.org/module/Moose::Meta::Attribute::Native::Trait::Array
 	    $self->add_core_module($nc_module);
 	    infof($nc_module . " is core");
 
@@ -396,88 +417,118 @@ __END__
 
 =head1 SUBROUTINES/METHODS
 
-This is work in progress...
+=head2 get_files()
 
-=head2 Dependencies::Searcher->get_modules()
-
-Us-e Ack to get modules and store lines into arrays
-
-=cut
-
-=head2 Dependencies::Searcher->get_files()
-
-TODO
-
-=cut
-
-=head2 Dependencies::Searcher->build_full_path()
-
-Retrieve names of :
+We suppose we can find dependancies in 3 different places :
 
 =over 2
 
-=item * lib/ directory, if it don't exist, we don't care and die
+=item * files in lib/ directory, recursively
 
 =item * Makefile.PL
 
-=item * script/ directory, if we use a Catalyst application
-
-=item * ... only if they exists !
+=item * script/ directory, i.e. if we use a Catalyst application
 
 =back
 
+If you know other places where we can find stuff, please report a bug.
+
+get_files() return an array containing which file or directories has been found.
+
 =cut
 
-=head2 Dependencies::Searcher->merge_dependencies()
+=head2 build_full_path()
+
+We need to build the path to the directories or files that will be
+passed to Ack as parameters. build_full_path() with get the content of
+the array returned by get_files() and concatenate it's values as a string.
+
+If the lib/ directory don't exist, the program die because we
+consider we are not into a plain old Perl Module.
+
+Note that the path is not passed directly to Ack because we use
+IPC::Cmd as a layer for the system command.
+
+=cut
+
+=head2 get_modules()
+
+Us-e Ack to retrieve modules names and return them into an array
+(containing dirt). See L<Dependencies::Searcher::AckRequester> for
+more informations.
+
+=cut
+
+=head2 merge_dependencies()
 
 Merge use and requires
 
 =cut
 
-=head2 Dependencies::Searcher->make_it_real()
+=head2 make_it_real()
 
 Remove special cases that can't be interesting.
 
 =cut
 
-=head2 Dependencies::Searcher->clean_everything()
+=head2 clean_everything()
 
 Remove everything but the module name. Remove dirt, clean stuffs...
 
 =cut
 
-=head2 Dependencies::Searcher->uniq()
+=head2 uniq()
 
 Make each array element uniq
 
 =cut
 
-=head2 Dependencies::Searcher->dissociate()
+=head2 dissociate()
 
 Dissociate core / non-core modules
 
 =cut
 
-=head2 Dependencies::Searcher->generate_report()
+=head2 generate_report()
 
-Generate the cpanfile for L<Carton>, with optionnal version number
+Generate the cpanfile for L<Carton>, with optionnal version
+number. Generate an hash containing the modules could be achieved one day.
 
 =cut
 
 =head2 Log::Minimal::PRINT override
 
-Just override the way Log::Minimal is used. We create a .out file in ./t directory. To see log, use tail -v /path/to/the/module/t/dependencies-searcher.[y-M-d].out
+Just override the way Log::Minimal is used. We create a .out file in
+./t  directory. To see log, use tail -v
+/path/to/the/module/t/dependencies-searcher.[y-M-d].out
 
 =cut
 
-=head1 AUTHOR
+=head1 CAVEATS
 
-smonff, C<< <smonff at gmail.com> >>
+=head2 No Win32 / Cygwin support
+
+This module do not run under Win32 / Cygwin environments because it
+use Ack as a hack even if it was not supposed to be used like that. 
+
+=cut
+
+=head2 Documentations sections trap
+
+Documentation sections starting by /^use/ or /^require/ are not ignored
+as documentation but will be considered as code. It will product some
+strange behaviors. 
+
+=cut
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-dependencies-searcher at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Dependencies-Searcher>.  I will be notified, and then you'll automatically be notified of progress on your bug as I make changes.
+Please report any bugs or feature requests to
+C<bug-dependencies-searcher at  rt.cpan.org>, or through the web
+interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Dependencies-Searcher>.
+I will be notified, and then you'll automatically be notified of
+progress on your bug as I make changes.
 
 =head1 TODOs
 
@@ -485,13 +536,19 @@ https://github.com/smonff/dependencies-searcher/issues
 
 =over 2
 
-=item * Add log into a tmp file and use tail over it to get debug traces during tests and development. Using L<https://metacpan.org/module/Log::Minimal> et L<http://stackoverflow.com/questions/9922899/perl-system-command-redirection-to-log-files>, 
+=item * Add log into a tmp file and use tail over it to get debug
+traces during tests and development. Using
+L<https://metacpan.org/module/Log::Minimal> and
+L<http://stackoverflow.com/questions/9922899/>
+("perl-system-command-redirection-to-log-files"),
 
-=item * Implement Module::Corelist 2.99 to get is_corelist() method 
+=item * Implement Module::Corelist 2.99 to get is_corelist() method
 
 =item * Use Module::Version's Perl interface
 
-=item * Bug "outdated" coremodule : if we need a "corelist" module that is a younger release than the one packed in the vanilla system Perl, this is bad...
+=item * Bug "outdated" coremodule : if we need a "corelist" module
+that is a younger release than the one packed in the vanilla system
+Perl, this is bad...
 
 =back
 
@@ -524,6 +581,10 @@ L<http://search.cpan.org/dist/Dependencies-Searcher/>
 
 =back
 
+=head1 AUTHOR
+
+smonff, C<< <smonff at gmail.com> >>
+
 =head1 Contributors
 
 =over
@@ -554,7 +615,7 @@ See L<http://perldoc.perl.org/Module/CoreList.html>
 
 =item * Andy Lester's Ack
 
-I've use it as the main source for the module. It was pure Perl so I've choose 
+I've use it as the main source for the module. It was pure Perl so I've choose
 it, even if Ack is not meant for being used programatically, this use do the
 job.
 
