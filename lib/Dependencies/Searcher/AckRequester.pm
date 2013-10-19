@@ -122,7 +122,7 @@ Dependencies::Searcher::AckRequester - Helps Dependencies::Searcher to use Ack
 This module use Ack through a system command to search recursively for
 patterns. It use IPC::Cmd as a layer between the module and Ack, that
 execute and retrieve the command output.
- 
+
 It also build the command itself (path and arguments). Arguments are
 stored into an array, because it is too much dangerous to build a
 command with strings (space problems are one of the reasons).
@@ -142,18 +142,18 @@ reachable or warns about it.
 =head2 build_cmd(@params)
 
 build_cmd() takes as parameter all the arguments Ack will
-need. Dependencies::Searcher defines it like this : 
+need. Dependencies::Searcher defines it like this :
 
 =over4
 
-=item * '--perl' : tells to search in Perl like files (*.pm, *.pl, etc.)  
+=item * '--perl' : tells to search in Perl like files (*.pm, *.pl, etc.) 
 
 =item * '-hi'    : suppress the prefixing filename on output + ignore
 case
 
 =item * $pattern : must be passed from your implementation
 
-=item * @path    : files and directories where Ack will go  
+=item * @path    : files and directories where Ack will go 
 
 All these params are merged in an only array ref that is returned for
 later use with IPC::Cmd.
@@ -162,9 +162,11 @@ later use with IPC::Cmd.
 
 =cut
 
-=head2 ack()
+=head2 ack($params_array_ref)
 
-Returns an array of potentially interesting lines, containing dependencies names 
+Execute the IPC::Cmd command that calls Ack and eturns an array of
+potentially interesting lines, containing dependencies names but some
+crap inside too.
 
 =cut
 
@@ -174,8 +176,11 @@ Win32 and Cygwin platforms aren't supported.
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-dependencies-searcher at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Dependencies-Searcher>.  I will be notified, and then you'll automatically be notified of progress on your bug as I make changes.
+Please report any bugs or feature requests to
+C<bug-dependencies-searcher  at rt.cpan.org>, or through the web
+interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Dependencies-Searcher>.
+I will be notified, and then you'll automatically be notified of
+progress on your bug as I make changes coucou coucou.
 
 =head1 TODOs
 
@@ -189,10 +194,10 @@ smonff, C<< <smonff at gmail.com> >>
 
 =item * Andy Lester's Ack
 
-Ack gives me the wish to try to write this module. It was pure Perl so I've choose 
-it because it was possible to install it through CPAN during the
-module installation process. Even if Ack was not meant for being used
-programatically, this hacked use of Ack do the job.
+Ack gives me the wish to try to write this module. It was pure  Perl so
+I've choose it because it was possible to install it through CPAN
+during the module installation process. Even if Ack was not meant for
+being used programatically, this hacked use of Ack do the job.
 
 See L<http://beyondgrep.com/>
 
