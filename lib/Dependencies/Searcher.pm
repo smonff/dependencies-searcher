@@ -73,11 +73,11 @@ L<Carton> cpanfile. Any duplicated entry will be removed and modules
 versions will be checked and made available. Core modules will be
 ommited because you don't need to install them.
 
-This  project has begun because it happens to me, and I don't want to
+This project has begun because it happens to me, and I don't want to
 search for modules to install by hand, I just want to run a simple
 script that update the list in a simple way. It was much more longer
-to write the module than to search by hand but I wish it will be
-usefull for others.
+to write the module than to search by hand but I wish it could be as
+much usefull it has been for me than for you.
 
 =cut
 
@@ -117,7 +117,7 @@ has 'core_modules' => (
 
 
 # Log stuff here
-$ENV{LM_DEBUG} = 0; # 1 for debug logs, 0 for info
+$ENV{LM_DEBUG} = 1; # 1 for debug logs, 0 for info
 my $work_path = File::HomeDir->my_data;
 my $log_fh = File::Stamped->new(
     pattern => catdir($work_path,  "dependencies-searcher.log.%Y-%m-%d.out"),
@@ -178,7 +178,7 @@ sub get_files {
 
 	$structure[0] = $prefix."/lib";
     } else {
-
+	#
 	# TEST IF THE PATH IS OK ???
 	#
 	#
@@ -326,9 +326,7 @@ sub dissociate {
 	    # Return the most recent version
 	    my $mversion_version = get_version($nc_module);
 	    # Return the corelist version
-	    my $corelist_version = $Module::CoreList::version{
-		$]
-	    }{"$nc_module"};
+	    my $corelist_version = $Module::CoreList::version{ $] }{"$nc_module"};
 
 	    debugf("Mversion version : " . $mversion_version);
 	    debugf("Corelist version : " . $corelist_version);
@@ -368,7 +366,7 @@ sub dissociate {
 	    # push @{ $self->core_modules }, $nc_module;
 
 	    # The "Moose" trait way
-	    # metacpan.org/module/Moose::Meta::Attribute::Native::Trait::Array
+	    # http://metacpan.org/module/Moose::Meta::Attribute::Native::Trait::Array
 	    $self->add_core_module($nc_module);
 	    infof($nc_module . " is core");
 
@@ -390,10 +388,11 @@ sub generate_report {
     foreach my $module_name ( @{$self->non_core_modules} ) {
 
 	my $version = get_version($module_name);
-	debugf("Module + version : " . $module_name . " " . $version);
 
 	# if not undef
 	if ($version) {
+	    debugf("Module + version : " . $module_name . " " . $version);
+
 	    # Add the "requires $module_name\n" to the next line of the file
 	    chomp($module_name, $version);
 
@@ -402,6 +401,7 @@ sub generate_report {
 	    } # else : other case ?
 
 	} else {
+	    debugf("Module + version : " . $module_name);
 	    say $cpanfile_fh "requires " . $module_name;
 	}
 
@@ -461,7 +461,7 @@ more informations.
 
 =head2 merge_dependencies()
 
-Merge use and requires
+Merge use and reqguires
 
 =cut
 
@@ -499,17 +499,23 @@ number. Generate an hash containing the modules could be achieved one day.
 =head2 Log::Minimal::PRINT override
 
 Just override the way Log::Minimal is used. We create a .out file in
-./t  directory. To see log, use tail -v
-/path/to/the/module/t/dependencies-searcher.[y-M-d].out
+./t  directory. To see log, use tail -vf
+~/local/share/dependencies-searcher.[y-M-d].out
 
 =cut
+
+=head1 LOGGING AND DEBUGGING
+
+This module has a very convenient logging system that use
+L<Log::Minimal> and L<File::Stamped> to write to a file that you will
+find in ~/.local/share/dependencies-searcher.[y-M-d].out
 
 =head1 CAVEATS
 
 =head2 No Win32 / Cygwin support
 
 This module do not run under Win32 / Cygwin environments because it
-use Ack as a hack even if it was not supposed to be used like that. 
+us-e Ack as a hack even if it was not supposed to be used like that. 
 
 =cut
 
