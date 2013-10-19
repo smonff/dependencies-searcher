@@ -127,15 +127,38 @@ It also build the command itself (path and arguments). Arguments are
 stored into an array, because it is too much dangerous to build a
 command with strings (space problems are one of the reasons).
 
+It's not made to be used independantly from Dependencies::Searcher.
+
 =head1 SUBROUTINES/METHODS
 
 =head2 get_path()
 
-Returns the Ack full path if installed. It will be used by ICP::Cmd.
+Returns the Ack full path if installed. Set the full_path Moose
+attribute that will be used by ICP::Cmd. It verify also that Ack is
+reachable or warns about it.
 
 =cut
 
-=head2 build_cmd()
+=head2 build_cmd(@params)
+
+build_cmd() takes as parameter all the arguments Ack will
+need. Dependencies::Searcher defines it like this : 
+
+=over4
+
+=item * '--perl' : tells to search in Perl like files (*.pm, *.pl, etc.)  
+
+=item * '-hi'    : suppress the prefixing filename on output + ignore
+case
+
+=item * $pattern : must be passed from your implementation
+
+=item * @path    : files and directories where Ack will go  
+
+All these params are merged in an only array ref that is returned for
+later use with IPC::Cmd.
+
+=back
 
 =cut
 
