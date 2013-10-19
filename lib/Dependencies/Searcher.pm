@@ -39,7 +39,6 @@ that can be used as a L<Carton> cpanfile.
 
     my $searcher = Dependencies::Searcher->new();
     my @elements = $searcher->get_files();
-    my $path = $searcher->build_full_path(@elements);
     my @uses = $searcher->get_modules($path, "use");
     my @uniq_modules = $searcher->uniq(@uses);
 
@@ -123,6 +122,8 @@ my $log_fh = File::Stamped->new(
     pattern => catdir($work_path,  "dependencies-searcher.log.%Y-%m-%d.out"),
 );
 
+say("tail -vf $work_path for log");
+
 # Overrides Log::Minimal PRINT
 $Log::Minimal::PRINT = sub {
     my ( $time, $type, $message, $trace) = @_;
@@ -134,11 +135,10 @@ debugf("Log file available in " . $work_path);
 # End of log init
 
 sub get_modules {
+    # @path contains files and directories
     my ($self, $pattern, @path) = @_;
 
     debugf("Ack pattern : " . $pattern);
-
-    my $ack_requester = Dependencies::Searcher::AckRequester->new();
 
     my @params = ('--perl', '-hi', $pattern, @path);
     foreach my $param (@params) {
@@ -146,6 +146,7 @@ sub get_modules {
     }
 
     my $requester = Dependencies::Searcher::AckRequester->new();
+
     my $ack_path = $requester->get_path();
     debugf("Ack path : " . $ack_path);
     my $cmd_use = $requester->build_cmd(@params);
@@ -194,19 +195,6 @@ sub get_files {
     }
 
     return @structure;
-}
-
-
-sub build_full_path {
-    my ($self, @elements) = @_;
-    my $path = "";
-    foreach my $element ( @elements ) {
-	$path .= " ./" .  $element;
-    }
-
-    # Remove endings " ./"
-    $path =~ s/\s\.\/$//;
-    return $path;
 }
 
 # Generate a "1" when merging if one of both is empty
@@ -406,6 +394,8 @@ sub generate_report {
 	}
 
     }
+
+    infof("File has been generated and is waiting for you");
     close $cpanfile_fh;
 }
 
@@ -419,7 +409,8 @@ __END__
 
 =head2 get_files()
 
-We suppose we can find dependancies in 3 different places :
+get_files() returns an array containing which file or directories has
+been found in the current root module directory. We suppose we can find dependancies in 3 different places :
 
 =over 2
 
@@ -431,37 +422,30 @@ We suppose we can find dependancies in 3 different places :
 
 =back
 
-If you know other places where we can find stuff, please report a bug.
-
-get_files() return an array containing which file or directories has been found.
-
-=cut
-
-=head2 build_full_path()
-
-We need to build the path to the directories or files that will be
-passed to Ack as parameters. build_full_path() with get the content of
-the array returned by get_files() and concatenate it's values as a string.
-
 If the lib/ directory don't exist, the program die because we
 consider we are not into a plain old Perl Module.
 
-Note that the path is not passed directly to Ack because we use
-IPC::Cmd as a layer for the system command.
+If you know other places where we can find stuff, please report a bug.
 
 =cut
 
-=head2 get_modules()
+=head2 get_modules("pattern", @elements)
 
-Us-e Ack to retrieve modules names and return them into an array
-(containing dirt). See L<Dependencies::Searcher::AckRequester> for
-more informations.
+You must pass a pattern to search for and the elements (files or 
+directories) where you want to search (array of strings from get_files).
+
+These patterns should be "^use" or "^require". 
+
+Then, Ack will be used to retrieve modules names into lines containing
+patterns and return them into an array (containing also dirt). 
+See L<Dependencies::Searcher::AckRequester> for more informations.
 
 =cut
 
-=head2 merge_dependencies()
+=head2 merge_dependencies(@modules, @modules)
 
-Merge use and reqguires
+Simple helper method that will merge use and require arrays if you
+search for both. Return an uniq array.
 
 =cut
 
@@ -523,7 +507,8 @@ us-e Ack as a hack even if it was not supposed to be used like that.
 
 Documentation sections starting by /^use/ or /^require/ are not ignored
 as documentation but will be considered as code. It will product some
-strange behaviors. 
+strange behaviors. That's why sometimes we write "us-e" in this
+documentation. It should be fixed.
 
 =cut
 

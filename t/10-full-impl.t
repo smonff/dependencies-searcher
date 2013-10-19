@@ -20,10 +20,6 @@ my @elements = $searcher->get_files();
 can_ok($searcher, 'get_files');
 ok($elements[0] =~ /lib/, 'The current directory don\'t seem to be a Perl module');
 
-#my $path = $searcher->build_full_path(@elements);
-#can_ok($searcher, 'build_full_path');
-#ok($path =~ m/\s\.\/lib \.\/Makefile\.PL/, 'The generated path is not conform');
-
 # NEED FULL PATH TO ACK !!!
 ok(can_run('ack'), "Ack is not installed!");
 
