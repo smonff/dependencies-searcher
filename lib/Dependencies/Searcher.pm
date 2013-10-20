@@ -514,15 +514,14 @@ C<core_modules> and C<non_core_modules> attributes, with optionnal
 version number (if version number can't be found, dependency name is
 print alone).
 
-Generate an hash containing the modules could be achieved one day.
+Generate an hash containing the modules could be achieved. Someday.
 
 =cut
 
 =head2 Log::Minimal::PRINT override
 
-Just override the way Log::Minimal is used. We create a .out file in
-./t  directory. To see log, use tail -vf
-~/local/share/dependencies-searcher.[y-M-d].out
+Just override the way Log::Minimal is used. See LOGGING AND DEBUGGING
+for more informations.
 
 =cut
 
@@ -530,21 +529,34 @@ Just override the way Log::Minimal is used. We create a .out file in
 
 This module has a very convenient logging system that use
 L<Log::Minimal> and L<File::Stamped> to write to a file that you will
-find in ~/.local/share/dependencies-searcher.[y-M-d].out
+find in the directory where local applications should store their
+internal data for the current user. This is totally portable (Thanks
+to Nikolay Mishin (mishin)). For exemple, on a Debian-like OS :
+
+    ~/.local/share/dependencies-searcher.[y-M-d].out
+
+To debug and use these logs :
+
+    $ tail -vf ~/local/share/dependencies-searcher.[y-M-d].out
+
+For more information on how to configure log level, read
+L<Log::Minimal> documentation.
 
 =head1 CAVEATS
 
 =head2 No Win32 / Cygwin support
 
 This module do not run under Win32 / Cygwin environments because it
-us-e Ack as a hack even if it was not supposed to be used like that.
+still use non portable code with slashes. It also us-e Ack as a hack
+through a system command even if it was not supposed to be used like
+that.
 
 =cut
 
 =head2 Documentations sections trap
 
-Documentation sections starting by /^use/ or /^require/ are not ignored
-as documentation but will be considered as code. It will product some
+Documentation sections starting by C</^use/> or C</^require/> are not ignored
+as documentation should be but will be considered as code. It will product some
 strange behaviors. That's why sometimes we write "us-e" in this
 documentation. It should be fixed.
 
@@ -561,23 +573,8 @@ progress on your bug as I make changes.
 
 =head1 TODOs
 
-https://github.com/smonff/dependencies-searcher/issues
-
-=over 2
-
-=item * Add log into a tmp file and use tail over it to get debug
-traces during tests and development. Using
-L<https://metacpan.org/module/Log::Minimal> and
-L<http://stackoverflow.com/questions/9922899/>
-("perl-system-command-redirection-to-log-files"),
-
-=item * Implement Module::Corelist 2.99 to get is_corelist() method
-
-=item * Use Module::Version's Perl interface
-
-=item * Bug "outdated" coremodule : if we need a "corelist" module
-that is a younger release than the one packed in the vanilla system
-Perl, this is bad...
+Most of the time, todos and features are on Github and Questub. 
+See https://github.com/smonff/dependencies-searcher/issues
 
 =back
 
@@ -587,8 +584,9 @@ You can find documentation for this module with the perldoc command.
 
     perldoc Dependencies::Searcher
 
-
 You can also look for information at:
+
+    See https://github.com/smonff/dependencies-searcher/
 
 =over 2
 
@@ -618,7 +616,7 @@ smonff, C<< <smonff at gmail.com> >>
 
 =over
 
-=item * Nikolay Mishin (mishin) makes it more cross-platform
+=item * Nikolay Mishin (mishin) helps to make it more cross-platform
 
 =back
 
