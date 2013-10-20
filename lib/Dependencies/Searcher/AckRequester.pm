@@ -146,7 +146,7 @@ L<Ack> is reachable or warns about it.
 C<build_cmd()> takes as parameter all the arguments Ack will
 need. L<Dependencies::Searcher> defines it like this :
 
-=over4
+=over 4
 
 =item * C<--perl>   : tells to search in Perl like files (C<*.pm>, C<*.pl>, etc.) 
 
