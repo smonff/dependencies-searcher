@@ -1,8 +1,7 @@
 Revision history for Dependencies-Searcher
 
-0.05_08 2013
+0.05_08 2013-10-20 21:58
  [EHANCEMENTS]
- - TODO More detailed tests
  - Format and clean code
  - Write AckRequester Documentation
  - Complete and correct Dependencies::Searcher documentation
