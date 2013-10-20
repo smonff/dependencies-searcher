@@ -68,7 +68,7 @@ your module package, and report it into a file that could be used as a
 L<Carton> cpanfile. Any duplicated entry will be removed and modules
 versions will be checked and made available. Core modules will be
 ommited because you don't need to install them (except in some special
-case, see dissociate() documentation).
+case, see C<dissociate()> documentation).
 
 This project has begun because it has happened to me, and I don't want
 to search for modules to install by hand, I just want to run a simple
@@ -231,7 +231,7 @@ sub make_it_real {
 # Clean correct lines that can't be removed
 sub clean_everything {
     my ($self, @dirty_modules) = @_;
-    my @clean_modules = (); 
+    my @clean_modules = ();
 
     foreach my $module ( @dirty_modules ) {
 
@@ -413,67 +413,69 @@ __END__
 
 =head2 get_files()
 
-get_files() returns an array containing which file or directories has
-been found in the current root module directory. We suppose we can
-find dependancies in 3 different places :
+C<get_files()> returns an array containing which file or directories has
+been found in the current root distribution directory. We suppose it
+can find dependancies in 3 different places :
 
 =over 2
 
-=item * files in lib/ directory, recursively
+=item * files in C<lib/> directory, recursively
 
-=item * Makefile.PL
+=item * C<Makefile.PL>
 
-=item * script/ directory, i.e. if we use a Catalyst application
+=item * C<script/> directory, i.e. if we use a Catalyst application
 
 =back
 
-If the lib/ directory don't exist, the program die because we
+If the C<lib/> directory don't exist, the program die because we
 consider we are not into a plain old Perl Module.
 
-If you know other places where we can find stuff, please report a bug.
+This is work in progress, if you know other places where we can find
+stuff, please report a bug.
 
 =cut
 
 =head2 get_modules("pattern", @elements)
 
-You must pass a pattern to search for and the elements (files or
-directories) where you want to search (array of strings from get_files).
+You must pass a pattern to search for, and the elements (files or
+directories) where you want to search (array of strings from C<get_files()>).
 
-These patterns should be "^use" or "^require".
+These patterns should be C<^use> or C<^require>.
 
 Then, Ack will be used to retrieve modules names into lines containing
-patterns and return them into an array (containing also dirt).
+patterns and return them into an array (containing also some dirt).
 See L<Dependencies::Searcher::AckRequester> for more informations.
 
 =cut
 
 =head2 merge_dependencies(@modules, @modules)
 
-Simple helper method that will merge use and require arrays if you
-search for both. Return an uniq array.
+Simple helper method that will merge C<use> and C<require> arrays if you
+search for both. Return an uniq array. It git a little caveat, see
+CAVEATS.
 
 =cut
 
 =head2 make_it_real(@modules)
 
 Move dependencies lines from an array to an another unless it is
-considered as a special case : minimal Perl verisons, "use autodie",
-"use warnings". The stuff here has to be B<removed>. Return a "real
-modules" array.
+considered as a special case : minimal Perl verisons, C<use autodie>,
+C<use warnings>. These stuff has to be B<removed>. Return a I<real
+modules> array (I<real interresting> modules).
 
 =cut
 
 =head2 clean_everything(@modules)
 
-After removing irrelevant stuff, we need to B<clean> what is
-considered as some crap (not strictly Name::Of::Module) but needs some
-cleaning. We are going to remove everything but the module
+After removing irrelevant stuff, we need to B<clean> what is leaving
+and is considered as being crap (not strictly <CName::Of::Module>) but
+needs some cleaning. We are going to remove everything but the module
 name (even version numbers).
 
 This code section is well commented (because it is regex-based) so,
 please refer to it directly.
 
-It returns an array of "clean modules".
+It returns an array of I<clean modules>.
 
 =cut
 
@@ -486,30 +488,31 @@ times. Return an array of unique modules.
 
 =head2 dissociate(@modules)
 
-Dissociate core / non-core modules using the awesome
-Module::Corelist::is_core method, that search in the current Perl
+Dissociate I<core> / I<non-core> modules using the awesome
+C<Module::Corelist::is_core method>, that search in the current Perl
 version if the module is from Perl core or not. Note that results can
-be different in another environment.
+be different according to the environment.
 
-More, you can have two versions of the same module installed on your
-environment (even if you use L<local::lib> when you install a recent
+More, B<you can have two versions of the same module installed on your
+environment> (even if you use L<local::lib> when you install a recent
 version of a file that has been integrated into Perl core (this
 version hasn't necessary been merged into core).
 
-So dissociate checks both and compares it, to be sure that a found core
-module the "integrated" version, not a fresh one. If it is fresh, the
-module is considered as a "non-core module".
+So C<dissociate()> checks both and compares it, to be sure that the found core
+module is the "integrated" version, not a fresh one that you have
+installed yourself. If it is fresh, the module is considered as a I<non-core>.
 
 This method don't return anything, but it stores found dependencies on the two
-core_modules and non_core_modules Moose attributes array.
+C<core_modules> and C<non_core_modules> L<Moose> attributes arrays.
 
 =cut
 
 =head2 generate_report()
 
-Generate the cpanfile for L<Carton>, based on data contained into core
-and non_core attributes, with optionnal version number (if version
-number can't be found, dependency name is print alone).
+Generate the C<cpanfile> for L<Carton>, based on data contained into
+C<core_modules> and C<non_core_modules> attributes, with optionnal
+version number (if version number can't be found, dependency name is
+print alone).
 
 Generate an hash containing the modules could be achieved one day.
 
