@@ -3,7 +3,7 @@ package Dependencies::Searcher;
 use 5.010;
 use Data::Printer;
 use feature qw(say);
-# Since 2.99 it got a is_core() method :)
+# Since 2.99 a is_core() method is available :)
 use Module::CoreList 2.99;
 use Module::Version 'get_version';
 use autodie;
@@ -23,14 +23,13 @@ our $VERSION = '0.05_08';
 
 =head1 NAME
 
-Dependencies::Searcher - Manage your dependencies list in a convenient way
+Dependencies::Searcher - Search recursively dependencies used in a
+module's directory and build a report that can be used as a L<Carton>
+cpanfile.
 
 =cut
 
 =head1 SYNOPSIS
-
-Search recursively dependencies used in a module's directory and build a report
-that can be used as a L<Carton> cpanfile.
 
     use Dependencies::Searcher;
 
@@ -55,10 +54,11 @@ that can be used as a L<Carton> cpanfile.
 
 Maybe you don't want to have to list all the dependencies of your Perl
 application by hand and want an automated way to build it. Maybe you
-forgot to do it for a long time ago. During this time, you've add lots
-of CPAN modules.  L<Carton> is here to help you manage dependencies
-between your development environment and production, but how to keep
-track of the list of modules you will pass to L<Carton>?
+forgot to do it for a long time ago. Or just during a short period.
+Anyway, you've add lots of CPAN modules. L<Carton> is here to help you
+manage dependencies between your development environment and
+production, but how to keep track of the list of modules you will pass
+to L<Carton>?
 
 Event if it is a no brainer to keep track of this list, it can be much
 better not to have to do it.
@@ -67,13 +67,14 @@ You will need a tool that will check for any 'requires' or 'use' in
 your module package, and report it into a file that could be used as a
 L<Carton> cpanfile. Any duplicated entry will be removed and modules
 versions will be checked and made available. Core modules will be
-ommited because you don't need to install them.
+ommited because you don't need to install them (except in some special
+case, see dissociate() documentation).
 
-This project has begun because it happens to me, and I don't want to
-search for modules to install by hand, I just want to run a simple
-script that update the list in a simple way. It was much more longer
-to write the module than to search by hand but I wish it could be as
-much usefull it has been for me than for you.
+This project has begun because it has happened to me, and I don't want
+to search for modules to install by hand, I just want to run a simple
+script that update the list in a convenient way. It was much more
+longer to write the module than to search by hand so I wish it could
+be useful for you now.
 
 =cut
 
@@ -85,6 +86,9 @@ dependencies and directories recursivity.
 Dependencies::Searcher only found direct dependencies, not
 dependencies of dependencies, it scans recursively directories but not
 dependencies..
+
+These direct dependencies are passed to the Perl toolchain (cpanminus)
+that will take care of any recursive dependencies.
 
 =cut
 
@@ -111,9 +115,9 @@ has 'core_modules' => (
     },
 );
 
-
 # Log stuff here
-$ENV{LM_DEBUG} = 1; # 1 for debug logs, 0 for info
+local $ENV{LM_DEBUG} = 1; # 1 for debug logs, 0 for info
+
 my $work_path = File::HomeDir->my_data;
 my $log_fh = File::Stamped->new(
     pattern => catdir($work_path,  "dependencies-searcher.log.%Y-%m-%d.out"),
@@ -127,7 +131,7 @@ $Log::Minimal::PRINT = sub {
     print {$log_fh} "$time [$type] $message\n";
 };
 
-debugf("Dependencies::Searcher 0.05_03 debugger init.");
+debugf("Dependencies::Searcher $VERSION debugger init.");
 debugf("Log file available in " . $work_path);
 # End of log init
 
@@ -226,8 +230,9 @@ sub make_it_real {
 
 # Clean correct lines that can't be removed
 sub clean_everything {
-    my @clean_modules = ();
     my ($self, @dirty_modules) = @_;
+    my @clean_modules = (); 
+
     foreach my $module ( @dirty_modules ) {
 
 	debugf("Dirty module : " . $module);
@@ -394,8 +399,8 @@ sub generate_report {
 
     }
 
-    infof("File has been generated and is waiting for you");
     close $cpanfile_fh;
+    infof("File has been generated and is waiting for you");
 }
 
 1;
