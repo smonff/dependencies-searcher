@@ -1,5 +1,11 @@
 Revision history for Dependencies-Searcher
 
+0.05_09 2013-10-
+ [FIX]
+ - A pod error
+ [EHANCEMENTS]
+ - More tests
+
 0.05_08 2013-10-20 21:58
  [EHANCEMENTS]
  - Format and clean code

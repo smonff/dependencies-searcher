@@ -576,8 +576,6 @@ progress on your bug as I make changes.
 Most of the time, todos and features are on Github and Questub. 
 See https://github.com/smonff/dependencies-searcher/issues
 
-=back
-
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
