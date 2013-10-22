@@ -19,12 +19,12 @@ use File::HomeDir;
 use File::Spec::Functions qw(catdir catfile);
 use Version::Compare;
 
-our $VERSION = '0.05_08';
+our $VERSION = '0.05_09';
 
 =head1 NAME
 
 Dependencies::Searcher - Search recursively dependencies used in a
-module's directory and build a report that can be used as a L<Carton>
+module's directory and build a report that can be used as a L<Carton|Carton>
 cpanfile.
 
 =cut
@@ -55,17 +55,17 @@ cpanfile.
 Maybe you don't want to have to list all the dependencies of your Perl
 application by hand and want an automated way to build it. Maybe you
 forgot to do it for a long time ago. Or just during a short period.
-Anyway, you've add lots of CPAN modules. L<Carton> is here to help you
+Anyway, you've add lots of CPAN modules. L<Carton|Carton> is here to help you
 manage dependencies between your development environment and
 production, but how to keep track of the list of modules you will pass
-to L<Carton>?
+to L<Carton|Carton>?
 
 Event if it is a no brainer to keep track of this list, it can be much
 better not to have to do it.
 
 You will need a tool that will check for any 'requires' or 'use' in
 your module package, and report it into a file that could be used as a
-L<Carton> cpanfile. Any duplicated entry will be removed and modules
+L<Carton|Carton> cpanfile. Any duplicated entry will be removed and modules
 versions will be checked and made available. Core modules will be
 ommited because you don't need to install them (except in some special
 case, see C<dissociate()> documentation).
@@ -444,7 +444,9 @@ These patterns should be C<^use> or C<^require>.
 
 Then, Ack will be used to retrieve modules names into lines containing
 patterns and return them into an array (containing also some dirt).
-See L<Dependencies::Searcher::AckRequester> for more informations.
+See
+L<Dependencies::Searcher::AckRequester|Dependencies::Searcher::AckRequester>
+for more informations.
 
 =cut
 
@@ -494,22 +496,22 @@ version if the module is from Perl core or not. Note that results can
 be different according to the environment.
 
 More, B<you can have two versions of the same module installed on your
-environment> (even if you use L<local::lib> when you install a recent
-version of a file that has been integrated into Perl core (this
-version hasn't necessary been merged into core).
+environment> (even if you use L<local::lib|local::lib> when you
+install a recent version of a file that has been integrated into Perl
+core (this version hasn't necessary been merged into core).
 
 So C<dissociate()> checks both and compares it, to be sure that the found core
 module is the "integrated" version, not a fresh one that you have
 installed yourself. If it is fresh, the module is considered as a I<non-core>.
 
 This method don't return anything, but it stores found dependencies on the two
-C<core_modules> and C<non_core_modules> L<Moose> attributes arrays.
+C<core_modules> and C<non_core_modules> L<Moose|Moose> attributes arrays.
 
 =cut
 
 =head2 generate_report()
 
-Generate the C<cpanfile> for L<Carton>, based on data contained into
+Generate the C<cpanfile> for L<Carton|Carton>, based on data contained into
 C<core_modules> and C<non_core_modules> attributes, with optionnal
 version number (if version number can't be found, dependency name is
 print alone).
@@ -528,10 +530,11 @@ for more informations.
 =head1 LOGGING AND DEBUGGING
 
 This module has a very convenient logging system that use
-L<Log::Minimal> and L<File::Stamped> to write to a file that you will
-find in the directory where local applications should store their
-internal data for the current user. This is totally portable (Thanks
-to Nikolay Mishin (mishin)). For exemple, on a Debian-like OS :
+L<Log::Minimal|Log::Minimal> and L<File::Stamped|File::Stamped> to
+write to a file that you will find in the directory where local
+applications should store their internal data for the current
+user. This is totally portable (Thanks to Nikolay Mishin
+(mishin)). For exemple, on a Debian-like OS :
 
     ~/.local/share/dependencies-searcher.[y-M-d].out
 
@@ -540,7 +543,7 @@ To debug and use these logs :
     $ tail -vf ~/local/share/dependencies-searcher.[y-M-d].out
 
 For more information on how to configure log level, read
-L<Log::Minimal> documentation.
+L<Log::Minimal|Log::Minimal> documentation.
 
 =head1 CAVEATS
 
@@ -624,14 +627,14 @@ smonff, C<< <smonff at gmail.com> >>
 
 =over
 
-=item * Brian D. Foy's Module::Extract::Use
+=item * Brian D. Foy's L<Module::Extract::Use|Module::Extract::Use>
 
 Was the main inspiration for this one. First, I want to use it for my needs
 but it was not recursive...
 
 See L<https://metacpan.org/module/Module::Extract::Use>
 
-=item * Module::CoreList
+=item * L<Module::CoreList|Module::CoreList>
 
 What modules shipped with versions of perl. I use it extensively to detect
 if the module is from Perl Core or not.

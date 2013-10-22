@@ -11,15 +11,17 @@ WriteMakefile(
     LICENSE          => 'Perl_5',
     PL_FILES         => {},
     CONFIGURE_REQUIRES => {
-        'ExtUtils::MakeMaker' => 6.74,
+	'ExtUtils::MakeMaker' => 6.74,
     },
     BUILD_REQUIRES => {
-        'Test::More' => 0,
+	'Test::More' => 0,
 	'IO::File'   => 0,
     },
     TEST_REQUIRES => {
-	'App::Ack'        => 0,
-	'Module::Version' => 0,
+	'App::Ack'            => 0,
+	'Module::Version'     => 0,
+	'Test::Pod::Coverage' => 1.08,
+	'Test::Pod'           => 1.48,
     },
     PREREQ_PM => {
 	'App::Ack'              => 2.10,

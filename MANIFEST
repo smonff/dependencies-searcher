@@ -6,7 +6,7 @@ MANIFEST			This list of files
 README
 t/00-load.t
 t/02-impl-ack-requester.t
-t/05-impl.t
+t/10-full-impl.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
