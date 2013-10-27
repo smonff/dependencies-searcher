@@ -63,7 +63,7 @@ $searcher->generate_report($searcher->non_core_modules);
 $cpanfile = IO::File->new('cpanfile', '<');
 
 my $line = $cpanfile->getline;
-ok($line =~ m/^requires\s[A-Za-z]/, "Cpanfile containes requires lines");
+ok($line =~ m/^requires\s[A-Za-z]/, "Cpanfile contains requires lines");
 
 # Have to test if cpanfile contains modules names and stuff
 #ok($line =~ m/^requires\s[A-Za-z]+{[::]*[A-Za-z]}*/, "Cpanfile containes requires lines");

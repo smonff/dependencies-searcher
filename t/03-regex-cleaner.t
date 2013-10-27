@@ -35,8 +35,14 @@ my @failing_stuff = ();
 
 my $searcher = Dependencies::Searcher->new();
 
+for my $dirty_module (@dirty_modules) {
+    like $dirty_module, qr/use \s /x, "Line should contain 'use '";
+}
+
 my @clean_modules = $searcher->clean_everything(@dirty_modules);
 
-
+for my $module (@clean_modules) {
+    unlike $module, qr/use \s /x, "Line should not contain 'use '";
+}
 
 ok 1;

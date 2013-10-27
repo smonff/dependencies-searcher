@@ -238,43 +238,92 @@ sub clean_everything {
 	debugf("Dirty module : " . $module);
 
 	# remove the 'use' and the space next
-	$module =~ s/use\s//i;
+	$module =~ s{
+			use \s
+		}
+		    {}xi; # Empty subtitution
 
-	# remove the 'require', quotes and the space next
+	# remove the require, quotes and the space next
 	# but returns the captured module name (non-greedy)
 	# i = not case-sensitive
-	$module =~ s/requires\s'(.*?)'/$1/i;
+	$module =~ s{
+			requires \s
+			'
+			(.*?)
+			'
+		}{ $1 }xi;
 
 	# Remove the ';' at the end of the line
-	$module =~ s/;//i;
+	$module =~ s/ ; //xi;
 
 	# Remove any qw(xxxxx xxxxx) or qw[xxx xxxxx]
 	# '\(' are for real 'qw()' parenthesis not for grouping
 	# Also removes empty qw()
-	$module =~ s/\sqw\(([A-Za-z]+(\s*[A-Za-z]*))*\)//i;
-	$module =~ s/\sqw\[([A-Za-z]+(_[A-Za-z]+)*(\s*[A-Za-z]*))*\]//i;
+	$module =~ s{
+			\s qw
+			\(
+			([A-Za-z]+(\s*[A-Za-z]*))*
+			\)
+		}{}xi;
+	$module =~ s{
+			\s qw
+			\[
+			([A-Za-z]+(_[A-Za-z]+)*(\s*[A-Za-z]*))*
+			\]
+		}
+		    {}xi; # Empty subtitution
 
 	# Remove method names between quotes (those that can be used
 	# without class instantiation)
-	$module =~ s/\s'[A-Za-z]+(_[A-Za-z]+)*'//i;
+	$module =~ s{
+			\s
+			'
+			[A-Za-z]+(_[A-Za-z]+)*
+			'
+		}
+		    {}xi; # Empty subtitution
 
 	# Remove dirty bases and quotes.
 	# This regex that substitute My::Module::Name
 	# to a "base 'My::Module::Name'" by capturing
 	# the name in a non-greedy way
-	$module =~ s/base\s'(.*?)'/$1/i;
+	$module =~ s{
+			base \s
+			'
+			(.*?)
+			'
+		}
+		    {$1}xi;
 
 	# Remove some warning sugar
-	$module =~ s/([a-z]+)\sFATAL\s=>\s'all'/$1/i;
+	$module =~ s{
+			([a-z]+)
+			\s FATAL
+			\s =>
+			\s 'all'
+		}
+		    {$1}xi;
 
 	# Remove version numbers
 	# See "a-regex-for-version-number-parsing" :
 	# http://stackoverflow.com/questions/82064/
-	$module =~ s/\s(\*|\d+(\.\d+){0,2}(\.\*)?)$//;
+	$module =~ s{
+			\s
+			(\*|\d+(\.\d+)
+			    {0,2}
+			    (\.\*)?)$
+		}
+		    {}x;
 
 	# Remove configuration stuff like env_debug => 'LM_DEBUG' but
 	# the quoted words have been removed before
-	$module =~ s/\s([A-Za-z]+(_[A-Za-z]+)*(\s*[A-Za-z]*))*\s=>//i;
+	$module =~ s{
+			\s
+			([A-Za-z]+(_[A-Za-z]+)*( \s*[A-Za-z]*))*
+			\s
+			=>
+		}
+		    {}xi;
 
 	debugf("Clean module : " . $module);
 	push @clean_modules, $module;
@@ -533,7 +582,7 @@ This module has a very convenient logging system that use
 L<Log::Minimal|Log::Minimal> and L<File::Stamped|File::Stamped> to
 write to a file that you will find in the directory where local
 applications should store their internal data for the current
-user. This is totally portable (Thanks to Nikolay Mishin
+u-ser. This is totally portable (Thanks to Nikolay Mishin
 (mishin)). For exemple, on a Debian-like OS :
 
     ~/.local/share/dependencies-searcher.[y-M-d].out
