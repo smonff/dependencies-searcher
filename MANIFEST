@@ -3,7 +3,7 @@ lib/Dependencies/Searcher.pm
 lib/Dependencies/Searcher/AckRequester.pm
 Makefile.PL
 MANIFEST			This list of files
-README
+README.md
 t/00-load.t
 t/02-impl-ack-requester.t
 t/10-full-impl.t
