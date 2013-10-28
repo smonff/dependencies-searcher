@@ -424,7 +424,7 @@ sub generate_report {
 
     my $self = shift;
 
-    open my $cpanfile_fh, '>', 'cpanfile';
+    open my $cpanfile_fh, '>', 'cpanfile' or die "Can't open cpanfile : $:!";
 
     foreach my $module_name ( @{$self->non_core_modules} ) {
 

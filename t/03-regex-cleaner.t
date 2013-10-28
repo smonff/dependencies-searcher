@@ -30,6 +30,7 @@ my @dirty_modules = (
     "use ExtUtils::MakeMaker;",
 );
 
+my @special_cases = ();
 my @imaginary_modules = ();
 my @failing_stuff = ();
 
@@ -37,12 +38,14 @@ my $searcher = Dependencies::Searcher->new();
 
 for my $dirty_module (@dirty_modules) {
     like $dirty_module, qr/use \s /x, "Line should contain 'use '";
+    like $dirty_module, qr/ ; /x, "Line should contain ;";
 }
 
 my @clean_modules = $searcher->clean_everything(@dirty_modules);
 
 for my $module (@clean_modules) {
-    unlike $module, qr/use \s /x, "Line should not contain 'use '";
+    unlike $module, qr/use \s /x, "Line should not contain any 'use '";
+    unlike $module, qr/requires \s ' (.*?) '/x, "Line should not contain any 'require \'Mod::Name\''";
+    unlike $module, qr/ ; /x, "Line should not contain any ;";
+    unlike $module, qr/ \s qw \( ([A-Za-z]+(\s*[A-Za-z]*))* \) /x, "Line should not contain any qw()";
 }
-
-ok 1;
