@@ -2,9 +2,13 @@ Revision history for Dependencies-Searcher
 
 0.05_09 2013-10-
  [FIX]
+ - Fix the issue #37, POD lines starting by use or requires are not considered as code anymore
+ - Fix the issue #30 , using Path::Class for making the module portable (especially path separators) 
  - A pod error
  [EHANCEMENTS]
- - More tests
+ - Tests for found patterns (POD or code)
+ - Activate tests for POD
+ - Tests for cpanfile
 
 0.05_08 2013-10-20 21:58
  [EHANCEMENTS]

@@ -12,15 +12,14 @@ my @non_core_modules = (
     "Module::CoreList",
     "Module::Version",
     "Moose",
-    "Cwd",
     "Log::Minimal",
     "File::Stamped",
-    "File::Temp",
     "File::HomeDir",
     "File::Spec::Functions",
     "Version::Compare",
     "IPC::Run",
     "ExtUtils::MakeMaker",
+    "Path::Class",
 );
 
 my @bug = (
@@ -35,11 +34,11 @@ my @bugged_non_core_modules = (@non_core_modules, @bug);
 $searcher->dissociate(@non_core_modules);
 $searcher->generate_report();
 
-my $fh = file ( 'cpanfile' );
-if (not defined $fh) {
+my $cpanfile = file('cpanfile');
+if (not defined $cpanfile) {
     die "Can't open cpanfile";
 } else {
-    my @lines = $fh->slurp;
+    my @lines = $cpanfile->slurp;
 
     ok(
 	@non_core_modules == @lines,
