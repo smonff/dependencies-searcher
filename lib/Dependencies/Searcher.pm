@@ -156,6 +156,7 @@ sub get_modules {
 
     my $ack_path = $requester->get_path();
     debugf("Ack path : " . $ack_path);
+
     my $cmd_use = $requester->build_cmd(@params);
 
     my @moduls = $requester->ack($cmd_use);

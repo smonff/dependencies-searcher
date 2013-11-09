@@ -1,6 +1,6 @@
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 12;
+use Test::More tests => 11;
 use Data::Printer;
 use feature qw(say);
 use IO::File;
@@ -11,17 +11,14 @@ use Dependencies::Searcher;
 
 my $searcher = Dependencies::Searcher->new();
 
-ok($searcher, "Searcher can not be created");
+ok($searcher, "Searcher creation");
 #ok($searcher->use_pattern eq $use_pattern, '$searcher->use_pattern can\'t be accessed');
 #ok($searcher->requires_pattern eq $requires_pattern, '$searcher->requires_pattern can\'t be accessed');
 #ok($searcher->parameters eq $parameters, '$searcher->parameters can\'t be accessed');
 
 my @elements = $searcher->get_files();
 can_ok($searcher, 'get_files');
-ok($elements[0] =~ /lib/, 'The current directory don\'t seem to be a Perl module');
-
-# NEED FULL PATH TO ACK !!!
-ok(can_run('ack'), "Ack is not installed!");
+ok($elements[0] =~ /lib/, 'The current directory should be a Perl module');
 
 my @uses = $searcher->get_modules("^use", @elements);
 

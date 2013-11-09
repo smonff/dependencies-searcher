@@ -24,6 +24,8 @@ has 'full_path' => (
 
 $IPC::Cmd::USE_IPC_RUN = 1;
 
+local $ENV{LM_DEBUG} = 1; # 1 for debug logs, 0 for info
+
 my $work_path = File::HomeDir->my_data;
 my $log_fh = File::Stamped->new(
     pattern => catdir($work_path,  "dependencies-searcher.log.%Y-%m-%d.out"),

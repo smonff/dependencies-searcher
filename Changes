@@ -1,9 +1,12 @@
 Revision history for Dependencies-Searcher
 
-0.05_10 2013-11-09 23:21
+0.05_10 2013-11-09 23:44
  [FIX]
+ - Use a full path for Ack use tests, because the simple 'ack' command is not portable
  - Fix bug #39, modules array that was supposed to be in scalar context but wasn't
  - Broken link in POD
+ [EHANCEMENT]
+ - Moved some tests from the full-impl test suite to ack-requester test suite
 
 0.05_09 2013-11-03 23:08
  [FIX]

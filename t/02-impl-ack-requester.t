@@ -1,6 +1,6 @@
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 9;
+use Test::More tests => 10;
 use Data::Printer;
 use feature qw(say);
 use IPC::Cmd qw[can_run run];
@@ -27,6 +27,9 @@ can_ok($requester, 'get_path');
 
 my $ack_path = $requester->get_path();
 ok($ack_path =~ /ack/, 'Ack don\'t seem to be installed');
+
+# NEED FULL PATH TO ACK !!!
+ok(can_run($ack_path), "Ack should be installed");
 
 my $cmd_use = $requester->build_cmd(@params_for_use);
 ok($cmd_use, 'Cmd can\'t be build');
