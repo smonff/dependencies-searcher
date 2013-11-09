@@ -40,15 +40,24 @@ if (not defined $cpanfile) {
 } else {
     my @lines = $cpanfile->slurp;
 
-    ok(
-	@non_core_modules == @lines,
-	'@uniq_modules should contain same number of element than cpanfile lines'
-    );
+    # For some reason, the array comparison through the 2 arrays in
+    # scalar context don't work on some cpantesters reports.
+    # That's maybe because the ok(xx, ,xx , xx) is a list context ???
+    # http://www.perlmonks.org/?node_id=296455
+    # See issue #39
+    my $lines_number   = @lines;
+    my $modules_number = @non_core_modules;
+    my $bugged_modules_number = @bugged_non_core_modules;
 
-    ok(
-	@bugged_non_core_modules != @lines,
-	'@bugged_non_core_modules should not contain same number of element than cpanfile lines'
-    );
+    ok($modules_number != $bugged_modules_number,
+       "The 2 arrays should not contain same number of elements");
+
+    ok($modules_number == $lines_number,
+       '@uniq_modules == cpanfile lines' );
+
+    ok($bugged_modules_number != $lines_number,
+       '@bugged_non_core_modules =! cpanfile lines');
+
 }
 
 ok 1;

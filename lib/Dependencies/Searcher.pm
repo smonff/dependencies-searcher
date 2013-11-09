@@ -10,14 +10,14 @@ use autodie;
 use Moose;
 use IPC::Cmd qw[can_run run];
 use Dependencies::Searcher::AckRequester;
-use Cwd;
 use Log::Minimal env_debug => 'LM_DEBUG';
 use File::Stamped;
 use IO::File;
-use File::Temp;
 use File::HomeDir;
 use File::Spec::Functions qw(catdir catfile);
 use Version::Compare;
+use Path::Class;
+use ExtUtils::Installed;
 
 our $VERSION = '0.05_09';
 
@@ -141,6 +141,12 @@ sub get_modules {
 
     debugf("Ack pattern : " . $pattern);
 
+    # The regex add the terminal semicolon at the end of the line to
+    # make the difference between comments and code, because "use" is
+    # a word that you can find often in a POD section, more much in
+    # the beginning of line than you could think
+    $pattern = "$pattern" . qr/.+;$/;
+
     my @params = ('--perl', '-hi', $pattern, @path);
     foreach my $param (@params) {
 	debugf("Param : " . $param);
@@ -169,30 +175,30 @@ sub get_modules {
 
 sub get_files {
     my $self = shift;
-    # This prefix will allow a more portable module
-    my $prefix = getcwd();
+    # Path::Class  allows a more portable module
+    my $lib_dir = dir('lib');
+    my $make_file = file('Makefile.PL');
+    my $script_dir = dir('script');
 
     my @structure;
     $structure[0] = "";
     $structure[1] = "";
     $structure[2] = "";
-    if (-d $prefix."/lib") {
+    if (-d $lib_dir) {
 
-	$structure[0] = $prefix."/lib";
+	$structure[0] = $lib_dir;
+
     } else {
-	#
-	# TEST IF THE PATH IS OK ???
-	#
-	#
+	# TODO TEST IF THE PATH IS OK ???
 	die "Don't look like we are working on a Perl module";
     }
 
-    if (-f $prefix."/Makefile.PL") {
-	$structure[1] = $prefix."/Makefile.PL";
+    if (-f $make_file) {
+	$structure[1] = $make_file;
     }
 
-    if (-d $prefix."/script") {
-	$structure[2] = $prefix."/script";
+    if (-d $script_dir) {
+	$structure[2] = $script_dir;
     }
 
     return @structure;
@@ -424,6 +430,12 @@ sub generate_report {
 
     my $self = shift;
 
+    #
+    # TODO !!! Check if the module is installed already with
+    # ExtUtils::Installed. If it it not, cry that
+    # Dependencies::Searcher is designed to be used in the complete env
+    #
+
     open my $cpanfile_fh, '>', 'cpanfile' or die "Can't open cpanfile : $:!";
 
     foreach my $module_name ( @{$self->non_core_modules} ) {
@@ -494,7 +506,7 @@ These patterns should be C<^use> or C<^require>.
 Then, Ack will be used to retrieve modules names into lines containing
 patterns and return them into an array (containing also some dirt).
 See
-L<Dependencies::Searcher::AckRequester|Dependencies::Searcher::AckRequester>
+L<https://metacpan.org/pod/release/SMONF/Dependencies-Searcher-0.05_09/lib/Dependencies/Searcher/AckRequester.pm|Dependencies::Searcher::AckRequester>
 for more informations.
 
 =cut
@@ -582,7 +594,7 @@ This module has a very convenient logging system that use
 L<Log::Minimal|Log::Minimal> and L<File::Stamped|File::Stamped> to
 write to a file that you will find in the directory where local
 applications should store their internal data for the current
-u-ser. This is totally portable (Thanks to Nikolay Mishin
+user. This is totally portable (Thanks to Nikolay Mishin
 (mishin)). For exemple, on a Debian-like OS :
 
     ~/.local/share/dependencies-searcher.[y-M-d].out

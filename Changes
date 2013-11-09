@@ -1,6 +1,11 @@
 Revision history for Dependencies-Searcher
 
-0.05_09 2013-10-
+0.05_10 2013-11-09 23:21
+ [FIX]
+ - Fix bug #39, modules array that was supposed to be in scalar context but wasn't
+ - Broken link in POD
+
+0.05_09 2013-11-03 23:08
  [FIX]
  - Fix the issue #37, POD lines starting by use or requires are not considered as code anymore
  - Fix the issue #30 , using Path::Class for making the module portable (especially path separators) 
