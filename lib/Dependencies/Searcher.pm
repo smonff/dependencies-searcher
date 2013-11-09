@@ -19,7 +19,7 @@ use Version::Compare;
 use Path::Class;
 use ExtUtils::Installed;
 
-our $VERSION = '0.05_09';
+our $VERSION = '0.05_10';
 
 =head1 NAME
 
