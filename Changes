@@ -1,5 +1,11 @@
 Revision history for Dependencies-Searcher
 
+0.05_11 2013-11-10 20:55
+ [FIX]
+
+ [EHANCEMENT]
+ - Remove some tests that weren't possible to pass
+
 0.05_10 2013-11-09 23:44
  [FIX]
  - Use a full path for Ack use tests, because the simple 'ack' command is not portable

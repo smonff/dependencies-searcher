@@ -19,7 +19,7 @@ use Version::Compare;
 use Path::Class;
 use ExtUtils::Installed;
 
-our $VERSION = '0.05_10';
+our $VERSION = '0.05_11';
 
 =head1 NAME
 
@@ -609,21 +609,17 @@ L<Log::Minimal|Log::Minimal> documentation.
 
 =head1 CAVEATS
 
-=head2 No Win32 / Cygwin support
+=head2 Low Win32 / Cygwin support
 
-This module do not run under Win32 / Cygwin environments because it
-still use non portable code with slashes. It also us-e Ack as a hack
-through a system command even if it was not supposed to be used like
-that.
+This module wans'nt supposed to run under Win32 / Cygwin environments
+because it was using non portable code with slashes. I hope this gets
+better but it still need some testing.
 
-=cut
+It also us-e Ack as a hack through a system command even if it was not
+supposed to be used like that.
 
-=head2 Documentations sections trap
-
-Documentation sections starting by C</^use/> or C</^require/> are not ignored
-as documentation should be but will be considered as code. It will product some
-strange behaviors. That's why sometimes we write "us-e" in this
-documentation. It should be fixed.
+Thanks to cpantesters.org community reports, things should go better and
+better.
 
 =cut
 

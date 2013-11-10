@@ -18,7 +18,7 @@ WriteMakefile(
 	'IO::File'   => 0,
     },
     TEST_REQUIRES => {
-	'App::Ack'            => 0,
+	'App::Ack'            => 2.10,
 	'Module::Version'     => 0,
 	'Test::Pod::Coverage' => 1.08,
 	'Test::Pod'           => 1.48,
