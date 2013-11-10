@@ -76,6 +76,9 @@ script that update the list in a convenient way. It was much more
 longer to write the module than to search by hand so I wish it could
 be useful for you now.
 
+This module is made to search dependencies for I<installed
+distributions>, it is not supposed to manage anything else.
+
 =cut
 
 =head1 WHY ISN'T IT JUST ANOTHER MODULE::SCANDEPS ?
@@ -506,9 +509,7 @@ These patterns should be C<^use> or C<^require>.
 
 Then, Ack will be used to retrieve modules names into lines containing
 patterns and return them into an array (containing also some dirt).
-See
-L<https://metacpan.org/pod/release/SMONF/Dependencies-Searcher-0.05_09/lib/Dependencies/Searcher/AckRequester.pm|Dependencies::Searcher::AckRequester>
-for more informations.
+See L<Dependencies::Searcher::AckRequester> for more informations.
 
 =cut
 
@@ -706,6 +707,8 @@ it, even if Ack is not meant for being used programatically, this use do the
 job.
 
 See L<http://beyondgrep.com/>
+
+=back
 
 See also :
 
