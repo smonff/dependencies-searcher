@@ -261,7 +261,7 @@ sub clean_everything {
 			'
 			(.*?)
 			'
-		}{ $1 }xi;
+		}{$1}xi; # Don't insert spaces here
 
 	# Remove the ';' at the end of the line
 	$module =~ s/ ; //xi;
@@ -635,7 +635,7 @@ progress on your bug as I make changes.
 
 =head1 TODOs
 
-Most of the time, todos and features are on Github and Questub. 
+Most of the time, todos and features are on Github and Questub.
 See https://github.com/smonff/dependencies-searcher/issues
 
 =head1 SUPPORT
@@ -717,8 +717,6 @@ See also :
 =item * https://metacpan.org/module/Perl::PrereqScanner
 
 =item * http://stackoverflow.com/questions/17771725/
-
-=back
 
 =back
 
