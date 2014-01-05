@@ -34,7 +34,7 @@ my @bugged_non_core_modules = (@non_core_modules, @bug);
 $searcher->dissociate(@non_core_modules);
 $searcher->generate_report();
 
-my $cpanfile = file('cpanfile');
+my $cpanfile = file('cpanfile'); # Should check possible errors
 if (not defined $cpanfile) {
     die "Can't open cpanfile";
 } else {
@@ -49,23 +49,20 @@ if (not defined $cpanfile) {
     my $modules_number = @non_core_modules;
     my $bugged_modules_number = @bugged_non_core_modules;
 
-    ok($modules_number != $bugged_modules_number,
+    cmp_ok($modules_number, '!=', $bugged_modules_number,
        "The 2 arrays should not contain same number of elements");
 
-    ok($modules_number == $lines_number,
-       '@uniq_modules == cpanfile lines' );
+    cmp_ok($modules_number, '==', $lines_number, 'modules number is the same than cpanfile lines' );
 
-    ok($bugged_modules_number != $lines_number,
-       '@bugged_non_core_modules =! cpanfile lines');
+    cmp_ok($bugged_modules_number, '!=', $lines_number, 'modules =! cpanfile lines');
 
 }
 
+# More stuff to test
+
+# only one space between require and name, etc
+# same number of lines in cpanfile than in final modules array
+# cpanfile contains a known number of lines (number of modules)
+
 ok 1;
 
-__END__
-
-Stuff to test
-
-* only one space between require and name, etc
-* same number of lines in cpanfile than in final modules array
-* cpanfile contains a known number of lines (number of modules)

@@ -1,8 +1,11 @@
 Revision history for Dependencies-Searcher
 
-0.05_11 2013-11-10 20:55
+0.06 2014-01-05 21:28
  [FIX]
+ - First stable release !
+ - Only change some typos, since all the issues have been resolved
 
+0.05_11 2013-11-10 20:55
  [EHANCEMENT]
  - Remove some tests that weren't possible to pass
 

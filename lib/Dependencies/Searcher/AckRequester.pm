@@ -14,8 +14,8 @@ use File::HomeDir;
 use File::Spec::Functions qw(catdir catfile);
 
 
-# These modules will be used throught a system call
-# App::Ack;
+# Warning !!! This modules will be used throught a system call
+#   - App::Ack;
 
 has 'full_path' => (
   is  => 'rw',
@@ -61,7 +61,7 @@ sub build_cmd {
     return $cmd_href;
 }
 
-# Maybe this is not very clean, but it works (except on MS Windows)
+# Maybe this is not very clean, but it works (except on MS Windows maybe)
 sub ack {
     my ($self, $cmd) = @_;
     my (
@@ -159,7 +159,7 @@ case
 
 =item * C<@path>    : files and directories where L<ack> will go 
 
-All these params are merged in an only array ref that is returned for
+All these params are merged in an only array reference that is returned for
 later use with L<IPC::Cmd>.
 
 =back
@@ -176,7 +176,8 @@ crap inside too.
 
 =head1 CAVEATS
 
-Win32 and Cygwin platforms aren't supported.
+Win32 and Cygwin platforms aren't well supported but last tests have not 
+been that bad.
 
 =head1 BUGS
 
@@ -196,7 +197,7 @@ smonff, C<< <smonff at gmail.com> >>
 
 =over
 
-=item * Andy Lester's Ack
+=item Ack
 
 Ack gives me the wish to try to write this module. It was pure Perl so
 I've choose it because it was possible to install it through CPAN

@@ -19,7 +19,7 @@ use Version::Compare;
 use Path::Class;
 use ExtUtils::Installed;
 
-our $VERSION = '0.05_11';
+our $VERSION = '0.06';
 
 =head1 NAME
 
@@ -47,6 +47,7 @@ cpanfile.
     # requires Moose, 2.0602
     # requires IPC::Cmd
     # requires Module::Version
+    # ...
 
 =cut
 
@@ -60,13 +61,13 @@ manage dependencies between your development environment and
 production, but how to keep track of the list of modules you will pass
 to L<Carton|Carton>?
 
-Event if it is a no brainer to keep track of this list, it can be much
-better not to have to do it.
+Event if it is a no brainer to keep track of this list by adding it by
+hand, it can be much better not to have to do it.
 
-You will need a tool that will check for any 'requires' or 'use' in
-your module package, and report it into a file that could be used as a
-L<Carton|Carton> cpanfile. Any duplicated entry will be removed and modules
-versions will be checked and made available. Core modules will be
+You will need a tool that will check for any I<requires> or I<use> in
+your module package, and report it into a file that could be used as an
+input L<Carton|Carton> cpanfile. Any duplicated entry will be removed and
+modules versions will be checked and made available. Core modules will be
 ommited because you don't need to install them (except in some special
 case, see C<dissociate()> documentation).
 
@@ -119,7 +120,7 @@ has 'core_modules' => (
 );
 
 # Log stuff here
-local $ENV{LM_DEBUG} = 1; # 1 for debug logs, 0 for info
+local $ENV{LM_DEBUG} = 0; # 1 for debug logs, 0 for info
 
 my $work_path = File::HomeDir->my_data;
 my $log_fh = File::Stamped->new(
@@ -134,8 +135,12 @@ $Log::Minimal::PRINT = sub {
     print {$log_fh} "$time [$type] $message\n";
 };
 
-debugf("Dependencies::Searcher $VERSION debugger init.");
-debugf("Log file available in " . $work_path);
+infof('  * * * * * * * * * * * * * * * * * * * *');
+infof('* H E R E   I S   A   N E W   S E A R C H *');
+infof('  * * * * * * * * * * * * * * * * * * * *');
+
+infof("Dependencies::Searcher $VERSION debugger init.");
+infof("Log file available in " . $work_path);
 # End of log init
 
 sub get_modules {
@@ -179,7 +184,7 @@ sub get_modules {
 
 sub get_files {
     my $self = shift;
-    # Path::Class  allows a more portable module
+    # Path::Class  functions allows a more portable module
     my $lib_dir = dir('lib');
     my $make_file = file('Makefile.PL');
     my $script_dir = dir('script');
@@ -193,7 +198,7 @@ sub get_files {
 	$structure[0] = $lib_dir;
 
     } else {
-	# TODO TEST IF THE PATH IS OK ???
+	# TODO : TEST IF THE PATH IS OK ???
 	die "Don't look like we are working on a Perl module";
     }
 
@@ -261,7 +266,7 @@ sub clean_everything {
 			'
 			(.*?)
 			'
-		}{$1}xi; # Don't insert spaces here
+		}{$1}xi; # Note -> don't insert spaces here
 
 	# Remove the ';' at the end of the line
 	$module =~ s/ ; //xi;
@@ -490,6 +495,8 @@ can find dependancies in 3 different places :
 
 =item * C<script/> directory, i.e. if we use a Catalyst application
 
+=item * maybe it should look in C<t/> directory (todo)
+
 =back
 
 If the C<lib/> directory don't exist, the program die because we
@@ -516,7 +523,7 @@ See L<Dependencies::Searcher::AckRequester> for more informations.
 =head2 merge_dependencies(@modules, @modules)
 
 Simple helper method that will merge C<use> and C<require> arrays if you
-search for both. Return an uniq array. It git a little caveat, see
+search for both. Return an uniq array. It got a little caveat, see
 CAVEATS.
 
 =cut
@@ -524,7 +531,7 @@ CAVEATS.
 =head2 make_it_real(@modules)
 
 Move dependencies lines from an array to an another unless it is
-considered as a special case : minimal Perl verisons, C<use autodie>,
+considered as a special case : minimal Perl versions, C<use autodie>,
 C<use warnings>. These stuff has to be B<removed>. Return a I<real
 modules> array (I<real interresting> modules).
 
@@ -579,7 +586,7 @@ C<core_modules> and C<non_core_modules> attributes, with optionnal
 version number (if version number can't be found, dependency name is
 print alone).
 
-Generate an hash containing the modules could be achieved. Someday.
+Generate a hash containing the modules could be achieved. Someday.
 
 =cut
 
@@ -608,16 +615,21 @@ To debug and use these logs :
 For more information on how to configure log level, read
 L<Log::Minimal|Log::Minimal> documentation.
 
+For a simple exemple on how to use it, see 
+L<http://smonff.github.io/blog/2013/09/24/how-to-log-easily-with-log-minimal-and-file-stamped/|This blog post>.
+
 =head1 CAVEATS
 
 =head2 Low Win32 / Cygwin support
 
-This module wans'nt supposed to run under Win32 / Cygwin environments
+This module was'nt supposed to run under Win32 / Cygwin environments
 because it was using non portable code with slashes. I hope this gets
-better but it still need some testing.
+better since it has been rewritten using L<Path::Class|Path::Class>
+but it still need some testing.
 
 It also us-e Ack as a hack through a system command even if it was not
-supposed to be used like that.
+supposed to be used like that. Yes, this is dirty. Yes, I plan to change
+things, even if Ack do the stuff proudly this way.
 
 Thanks to cpantesters.org community reports, things should go better and
 better.
