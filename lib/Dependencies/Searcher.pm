@@ -19,7 +19,7 @@ use Version::Compare;
 use Path::Class;
 use ExtUtils::Installed;
 
-our $VERSION = '0.06';
+our $VERSION = '0.06.1';
 
 =head1 NAME
 
@@ -615,8 +615,7 @@ To debug and use these logs :
 For more information on how to configure log level, read
 L<Log::Minimal|Log::Minimal> documentation.
 
-For a simple exemple on how to use it, see 
-L<http://smonff.github.io/blog/2013/09/24/how-to-log-easily-with-log-minimal-and-file-stamped/|This blog post>.
+For a simple exemple on how to use it, see this blog post http://bit.ly/1lJwyX7
 
 =head1 CAVEATS
 

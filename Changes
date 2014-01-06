@@ -1,5 +1,9 @@
 Revision history for Dependencies-Searcher
 
+0.06.1 2014-01-06 09:25
+ [FIX]
+ - A pod error, need to deploy it again to run the tests
+
 0.06 2014-01-05 21:28
  [FIX]
  - First stable release !
