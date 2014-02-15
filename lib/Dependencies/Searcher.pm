@@ -19,7 +19,7 @@ use Version::Compare;
 use Path::Class;
 use ExtUtils::Installed;
 
-our $VERSION = '0.06.1';
+our $VERSION = '0.062';
 
 =head1 NAME
 
@@ -688,6 +688,8 @@ smonff, C<< <smonff at gmail.com> >>
 =over
 
 =item * Nikolay Mishin (mishin) helps to make it more cross-platform
+
+=item * Alexandr Ciornii (chorny) advises on version numbers
 
 =back
 

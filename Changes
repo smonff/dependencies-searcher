@@ -1,5 +1,10 @@
 Revision history for Dependencies-Searcher
 
+0.062 2014-02-16 00:09
+ [FIX]
+ - Now use the standard cpanfile syntax
+ - Now use appropriate version numbers (thanx chorny) 
+
 0.06.1 2014-01-06 09:25
  [FIX]
  - A pod error, need to deploy it again to run the tests
