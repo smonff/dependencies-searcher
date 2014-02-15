@@ -459,7 +459,7 @@ sub generate_report {
 	    chomp($module_name, $version);
 
 	    if ($version =~ m/[0-9]\.[0-9]+/ ) {
-		say $cpanfile_fh "requires " . $module_name . ", " . $version;
+		say $cpanfile_fh "requires '$module_name', '$version';";
 	    } # else : other case ?
 
 	} else {
