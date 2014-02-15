@@ -52,9 +52,37 @@ if (not defined $cpanfile) {
     cmp_ok($modules_number, '!=', $bugged_modules_number,
        "The 2 arrays should not contain same number of elements");
 
-    cmp_ok($modules_number, '==', $lines_number, 'modules number is the same than cpanfile lines' );
+    cmp_ok(
+	$modules_number,
+	'==',
+	$lines_number,
+	'modules number is the same than cpanfile lines'
+    );
 
-    cmp_ok($bugged_modules_number, '!=', $lines_number, 'modules =! cpanfile lines');
+    cmp_ok(
+	$bugged_modules_number,
+	'!=', $lines_number,
+	'modules =! cpanfile lines'
+    );
+
+    # This test check that each lines respects the cpanfile syntax
+    foreach my $line (@lines) {
+	ok($line =~ m{
+			 requires
+			 \s
+			 '.*?' # Module name
+			 ,
+			 \s
+			 '
+			 (\*|\d+(\.\d+) # Version number
+			    {0,2}       # http://stackoverflow.com/questions/82064/
+			    (\.\*)?)    #
+			 '
+			 ;
+		 }x
+	     ,
+       "Lines should look like the cpanfile syntax");
+    }
 
 }
 
