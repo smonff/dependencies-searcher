@@ -19,7 +19,7 @@ use Version::Compare;
 use Path::Class;
 use ExtUtils::Installed;
 
-our $VERSION = '0.062';
+our $VERSION = '0.063';
 
 =head1 NAME
 
@@ -464,7 +464,7 @@ sub generate_report {
 
 	} else {
 	    debugf("Module + version : " . $module_name);
-	    say $cpanfile_fh "requires " . $module_name;
+	    say $cpanfile_fh "requires '$module_name';";
 	}
 
     }

@@ -1,5 +1,13 @@
 Revision history for Dependencies-Searcher
 
+0.063 2014-02-16 19:29
+ [FIX]
+ - Fix #48 : some tests fails because we use modules that where supposed
+   to not be in core but are in recent version of Perl (especially with 
+   Module::CoreList)
+ - If we don't find a specific module version, we format the cpanfile
+   line in the right way anyway
+
 0.062 2014-02-16 00:09
  [FIX]
  - Now use the standard cpanfile syntax
