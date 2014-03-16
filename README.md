@@ -15,6 +15,10 @@ This project has begun because it happens to me, and I don't want to search for 
 
 To install this module, run the following commands:
 
+    cpanm Dependencies::Searcher
+
+Or:
+
     perl Makefile.PL
     make
     make test
