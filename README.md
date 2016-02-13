@@ -2,6 +2,11 @@
 
 Dependencies::Searcher - Search recursively dependencies used in a Perl module's root directory and build a report that can be used as a Carton cpanfile.
 
+**************************************************************
+This repository is an archive. It has been moved to [a Gitlab instance](https://git.framasoft.org/smonff/dependencies-searcher). You can [report bugs and request features  here](https://git.framasoft.org/smonff/dependencies-searcher/issues).
+**************************************************************
+
+
 Maybe you don't want to have to list all the dependencies of your Perl application by hand and want an automated way to build it. Maybe you forgot to do it for a long time ago. During this time, you've add lots of CPAN modules. L<Carton|Carton> is here to help you manage dependencies between your development environment and production, but how to keep track of the list of modules you will pass to to Carton?
 
 Event if it is a no brainer to keep track of this list, it can be much better not to have to do it.
@@ -34,9 +39,10 @@ perldoc command.
 You can also look for information at:
 
     * RT, CPAN's request tracker ([report bugs here](http://rt.cpan.org/NoAuth/Bugs.html?Dist=Dependencies-Searcher))
+    * you should also report bugs on [the current Gitlab bug tracker](https://git.framasoft.org/smonff/dependencies-searcher/issues)
     * AnnoCPAN, Annotated CPAN documentation, you can [help on documentation there](http://annocpan.org/dist/Dependencies-Searcher)
     * CPAN Ratings, [rate the module there](http://cpanratings.perl.org/d/Dependencies-Searcher)
-	* [Search CPAN](https://metacpan.org/release/Dependencies-Searcher/)
+    * [Search CPAN](https://metacpan.org/release/Dependencies-Searcher/)
         
 ## LICENSE AND COPYRIGHT
 
